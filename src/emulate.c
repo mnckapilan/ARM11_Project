@@ -1,21 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "emulator/emulator_io.h"
+
 #define NUM_EXPECTED_ARGS 2
+#define WORD_SIZE 32
+#define NUM_REGISTERS 17
+#define NUM_MEMORY_LOCATIONS 65536
+
+
 
 int main(int argc, char **argv) {
 	
-	if (argc != NUM_EXPECTED_ARGS) {
-	 	printf("The emulator takes exactly one file argument\n");
-	  	return -1;	
-	}
+	FILE* instrFile;
 
-	FILE *binFile;
-	binFile = fopen(argv[1], "rb");
-	
-	if (binFile == NULL) {
-		printf("Error opening file\n");
-		return -1;
-	}
-	
-	return 0;
+	if (load_file(argv[1], instrFile, NUM_MEMORY_LOCATIONS) != 0)
+		exit(EXIT_FAILURE);
 }
+
