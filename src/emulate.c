@@ -13,8 +13,8 @@ int main(int argc, char **argv) {
 	binFile = fopen(argv[1], "rb");
 	
 	if (binFile == NULL) {
-		printf("Error opening file %p\n", argv[1]);
-		exit(1);
+		printf("Error opening file\n");
+		return -1;
 	}
 	
 	return 0;
