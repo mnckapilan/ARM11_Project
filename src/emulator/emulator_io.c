@@ -2,7 +2,7 @@
 // Purpose: to read the binary file input from path that is passed as a parameter
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdint.h>
 
 #define NO_OF_REGS 16
 #define MEMSIZE 65536
@@ -28,10 +28,10 @@ int fileExists(char *path)
 
 
 //to get the size of the file
-long unsigned int getSize(FILE *file)
+uint64_t getSize(FILE *file)
 {
     fseek(file, 0, SEEK_END);
-    long unsigned int size = ftell(file);
+    uint64_t size = ftell(file);
     fseek(file, 0, SEEK_SET);
     return size;
 }
