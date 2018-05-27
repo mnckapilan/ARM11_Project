@@ -1,4 +1,3 @@
-//
 // Created by Kapilan M on 26/05/2018.
 // Purpose: to read the binary file input from path that is passed as a parameter
 #include <stdio.h>

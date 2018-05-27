@@ -1,5 +1,21 @@
 #include <stdlib.h>
+#include <stdio.h>
+#define NUM_EXPECTED_ARGS 2
 
 int main(int argc, char **argv) {
-    return EXIT_SUCCESS;
+	
+	if (argc != NUM_EXPECTED_ARGS) {
+	 	printf("The emulator takes exactly one file argument\n");
+	  	return -1;	
+	}
+
+	FILE *binFile;
+	binFile = fopen(argv[1], "rb");
+	
+	if (binFile == NULL) {
+		printf("Error opening file\n");
+		return -1;
+	}
+	
+	return 0;
 }
