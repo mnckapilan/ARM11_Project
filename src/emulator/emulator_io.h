@@ -1,5 +1,5 @@
-#ifndef emulator_io_h
-#define emulator_io_h
+#ifndef EMULATOR_IO_H
+#define EMULATOR_IO_H
 
 #include <stdio.h>
 #include <stdint.h>

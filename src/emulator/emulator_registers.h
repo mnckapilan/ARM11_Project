@@ -1,0 +1,8 @@
+#define NUM_REGISTERS 17
+
+#ifndef EMULATOR_REGISTERS_H
+#define EMULATOR_REGISTERS_H
+
+
+
+#endif

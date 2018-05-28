@@ -1,0 +1,6 @@
+#define NUM_MEMORY_LOCATIONS 65536
+
+#ifndef EMULATOR_MEMORY_H
+#define EMULATOR_MEMORY_H
+
+#endif
