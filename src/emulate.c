@@ -11,7 +11,12 @@
 
 int main(int argc, char **argv) {
 	
-	FILE* instrFile;
+	if (argc != NUM_EXPECTED_ARGS) {
+		fprintf(stderr, "Emulator takes exactly one file as an argument.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	FILE* instrFile = NULL;
 
 	if (load_file(argv[1], instrFile, NUM_MEMORY_LOCATIONS) != 0)
 		exit(EXIT_FAILURE);

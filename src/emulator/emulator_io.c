@@ -10,7 +10,7 @@
 
 #include "emulator_io.h"
 
-FILE* open_file(char* path, FILE* file)
+FILE* open_file(char* path)
 {
     FILE* file = fopen(path, "rb");
     return file;
@@ -48,7 +48,7 @@ uint32_t get_size(FILE* file)
 uint8_t load_file(char* path, FILE* file, uint32_t memorySize) 
 {
 	if (file_exists(path) != 0) {
-			fprintf(stderr, "Specified file path does not exist.\n");
+			fprintf(stderr, "Specified file path doesn't exist.\n");
 			return 1;
 	}
 	
