@@ -1,1 +1,0 @@
-/usr/bin/cc  -g   CMakeFiles/arm11_09.dir/src/emulator/emulator_header.c.o CMakeFiles/arm11_09.dir/src/emulator/emulator_multiply.c.o CMakeFiles/arm11_09.dir/src/assemble.c.o CMakeFiles/arm11_09.dir/src/emulate.c.o  -o arm11_09 
