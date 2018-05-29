@@ -3,17 +3,22 @@
 
 #include "emulator_registers.h"
 #include "emulator_memory.h"
+#include "emulator_constants.h"
 
-#define WORD_SIZE 32
-#define NUM_REGISTERS 17
-#define NUM_MEMORY_LOCATIONS 65536
-
-typedef struct cpuState 
+struct CPUState
 {
-	memoryByte memory[NUM_MEMORY_LOCATIONS];
-	reg regs[NUM_REGISTERS];	
-} cpu;
+	uint8_t *memory ;
+	uint32_t *regs;
+};
 
+struct CPUState initialize_CPU();
 
+void write_to_memory(uint8_t *memory, uint16_t addr, uint32_t val);
+
+uint32_t read_from_memory(uint8_t *memory, uint16_t addr);
+
+void write_to_register(uint32_t *regs, uint8_t Rn, uint32_t val);
+
+uint32_t read_from_register(uint32_t *regs, uint8_t Rn);
 
 #endif

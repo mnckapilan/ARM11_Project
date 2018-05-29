@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
 	if (load_file(argv[1], instrFile, NUM_MEMORY_LOCATIONS) != 0)
 		exit(EXIT_FAILURE);
 
+	struct CPUState cpu = initialize_CPU();
 	
 	return 0;
 }

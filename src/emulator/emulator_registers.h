@@ -2,12 +2,14 @@
 #define EMULATOR_REGISTERS_H
 
 #include <stdint.h>
+#include "emulator_constants.h"
 
 #define NUM_REGISTERS 17
-#define NUM_BYTES_PER_REGISTER 4
 
-typedef uint8_t reg[4];
+void clear_register(uint32_t *reg);
 
+uint32_t read_register(uint32_t *reg);
 
+void write_register(uint32_t *reg, uint32_t val);
 
 #endif
