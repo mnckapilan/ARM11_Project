@@ -21,17 +21,15 @@ void close_file(FILE* file)
     fclose(file);	
 }
 
-
 /* 
  * F_OK is a parameter passed to the access method to indicate we're checking to see
  * if the file exists.
  * The access function returns 0 if the file exists and -1 otherwise.
  */
-uint8_t file_exists(char* path)
+int32_t file_exists(char* path)
 {
     return access (path, F_OK);
 }
-
 
 /*
  * Finds the end of the file, stores this position, restores the file position to the 
@@ -40,25 +38,25 @@ uint8_t file_exists(char* path)
 uint32_t get_size(FILE* file)
 {
     fseek(file, 0, SEEK_END);
-    uint32_t size = ftell(file);
+    uint32_t size = (uint32_t) ftell(file);
     fseek(file, 0, SEEK_SET);
     return size;
 }
 
-uint8_t load_file(char* path, FILE* file, uint32_t memorySize) 
+FILE* load_file(char* path, uint32_t memorySize)
 {
 	if (file_exists(path) != 0) {
 			fprintf(stderr, "Specified file path doesn't exist.\n");
-			return 1;
+			return NULL;
 	}
-	
-	file = open_file(path);
+
+	FILE* file = open_file(path);
 
 	if (get_size(file) > memorySize) {
-			fprintf(stderr, "File is too large to store its contents in memory.\n");
-	 		close_file(file);
-			return 1;
+		fprintf(stderr, "File is too large to store its contents in memory.\n");
+		close_file(file);
+		return NULL;
 	}
-
-	return 0;
+	
+	return file;
 }
