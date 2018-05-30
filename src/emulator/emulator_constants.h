@@ -6,5 +6,7 @@
 #define NUM_MEMORY_LOCATIONS 65536
 #define WORD_SIZE 32
 #define BYTE_SIZE 8
+#define PC_INDEX 15
+#define CPSR_INDEX 16
 
 #endif
