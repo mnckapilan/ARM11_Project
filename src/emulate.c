@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "emulator/emulator.h"
+#include "emulator_io.h"
 
 #define NUM_EXPECTED_ARGS 2
 #define WORD_SIZE 32

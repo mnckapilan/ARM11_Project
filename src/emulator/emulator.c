@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include "emulator.h"
+#include "emulator_io.h"
 
 FILE* open_file(char* path)
 {

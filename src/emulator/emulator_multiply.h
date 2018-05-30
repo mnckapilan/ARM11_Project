@@ -1,19 +1,11 @@
-#ifndef emulator_io_h
-#define emulator_io_h
+//
+// Created by Kapilan M on 30/05/2018.
+//
 
-#include <stdio.h>
-#include <stdint.h>
+#ifndef ARM11_09_EMULATOR_MULTIPLY_H
+#define ARM11_09_EMULATOR_MULTIPLY_H
 
-FILE* open_file(char* path);
-
-void close_file(FILE* path);
-
-uint8_t file_exists(char* path);
-
-uint32_t get_file_size(FILE* file);
-
-uint8_t load_file(char* path, FILE* file, uint32_t memorySize);
-
+#include <ntsid.h>
 
 typedef void *PointerToBeCast;
 // functions to apply shifting
@@ -42,4 +34,7 @@ typedef struct
     u_int32_t *des;
     u_int8_t     s;
 } MultiplyInstruction;
-#endif
+
+
+#endif //ARM11_09_EMULATOR_MULTIPLY_H
+

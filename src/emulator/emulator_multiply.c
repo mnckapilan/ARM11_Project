@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include "emulator.h"
+#include "emulator_multiply.h"
 
 void multiply(PointerToBeCast base) {
 
