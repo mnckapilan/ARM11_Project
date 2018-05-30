@@ -14,12 +14,14 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	FILE* instrFile = NULL;
+	FILE* instrFile = load_file(argv[1], NUM_MEMORY_LOCATIONS);
 
-	if (load_file(argv[1], instrFile, NUM_MEMORY_LOCATIONS) != 0)
+	if (instrFile == NULL)
 		exit(EXIT_FAILURE);
 
 	struct CPUState cpu = initialize_CPU();
+
+	read_instructions(instrFile, cpu);
 	
 	return 0;
 }

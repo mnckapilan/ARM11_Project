@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+uint32_t create_word_from_bytes(uint8_t* firstBytePtr);
+
 void clear_word(uint8_t *memLoc);
 
 void write_word(uint8_t *memLoc, uint32_t val);
