@@ -5,6 +5,8 @@
 #ifndef ARM11_09_EMULATOR_DATA_PROCESSING_H
 #define ARM11_09_EMULATOR_DATA_PROCESSING_H
 
+#define MASK_IMM 00000000000000000000000011111111b
+
 typedef struct cpsr {
     int n;
     int z;
@@ -27,20 +29,23 @@ typedef enum {
 
 typedef struct data_processing {
     OPCODE opcode;
-    u_int32_t rn;
-    u_int32_t rd;
-    u_int32_t op2;
+    uint32_t rn;
+    uint32_t rd;
+    uint32_t op2;
     int i;
     int s;
 } data_processing;
 
 typedef struct emulator_state {
     data_processing *data_pro;
-    u_int32_t *reg;
+    uint32_t *reg;
     uint8_t *memory;
     cpsr *cpsr_flags;
 };
 
+void setZ(emulator_state *state, uint32_t res);
+void setN(emulator_state *state, uint32_t res);
+uint32_t rotate_right(uint32_t num);
 void execute_data_proc(emulator_state *state);
 
 #endif //ARM11_09_EMULATOR_DATA_PROCESSING_H
