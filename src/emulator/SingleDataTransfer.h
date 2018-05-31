@@ -23,6 +23,6 @@ int checkConditionCode(uint32_t instruction, struct CPUState cpu);
 
 uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t constantShiftAmount);
 
-void interpret_offset_shifted_reg(struct CPUState cpu, uint32_t instruction);
+uint16_t interpret_offset_shifted_reg(struct CPUState cpu, uint32_t instruction);
 
 #endif
