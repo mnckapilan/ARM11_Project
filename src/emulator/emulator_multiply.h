@@ -17,10 +17,18 @@ typedef struct multiply_instr {
     uint32_t operand2;
 } multiply_instr;
 
+typedef struct cpsrFlag {
+    int n;
+    int z;
+    int c;
+    int v;
+} cpsr;
+
 typedef struct state {
     multiply_instr *multiply_instruction;
     uint32_t *reg;
     uint8_t *memory;
+    cpsr *cpsrFlag;
 } state;
 
 #endif
