@@ -5,6 +5,8 @@
 #ifndef ARM11_09_UTILITIES_H
 #define ARM11_09_UTILITIES_H
 
+#include <stdint.h>
+
 uint32_t bits_extract(uint32_t value, int begin, int end);
 
 #endif //ARM11_09_UTILITIES_H

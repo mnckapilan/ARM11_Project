@@ -5,7 +5,7 @@
 #ifndef ARM11_09_EMULATOR_MULTIPLY_H
 #define ARM11_09_EMULATOR_MULTIPLY_H
 
-#include <ntsid.h>
+#include <stdint.h>
 
 typedef struct multiply_instr {
     int set;
