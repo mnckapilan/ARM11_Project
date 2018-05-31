@@ -37,7 +37,7 @@ void static set_CPSR(int32_t val, struct CPUState cpu) {
     if (val < 0)
         write_to_register(cpu, CPSR_INDEX, CPSR_N);
     else if (val == 0)
-        write_to_register(cpu, CPSR_INDEX, CPSR_Z);
+        write_to_register(cpu, CPSR_INDEX, CPSR_Z); // might be incorrect
 }
 
 /* PRE: instruction is a multiply one */
