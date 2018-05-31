@@ -4,10 +4,7 @@
 #include <stdio.h>
 
 struct Instruction {
-    uint8_t byte0;
-    uint8_t byte1;
-    uint8_t byte2;
-    uint8_t byte3;
+    uint8_t b0, b1, b2, b3;
 };
 
 struct CPUState initialize_CPU()
@@ -91,8 +88,9 @@ void read_instructions(FILE* file, struct CPUState cpu)
     struct Instruction instr;
     uint32_t size = get_size(file) / BYTES_PER_WORD;
 
-    for (i = 0; i < size; i++) {
+    for (i = 0; i < size; i++)
+    {
         fread(&instr, sizeof(struct Instruction), 1, file);
-        write_to_memory(cpu, i * BYTES_PER_WORD, create_word_from_bytes(&instr.byte0));
+        write_to_memory(cpu, i * BYTES_PER_WORD, create_word_from_bytes(&instr.b0));
     }
 }
