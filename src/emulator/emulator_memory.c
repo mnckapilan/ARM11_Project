@@ -41,7 +41,7 @@ uint32_t read_word(uint8_t *memLoc)
     for (i = 0; i < BYTES_PER_WORD; i++, bytePtr++)
         result += ((*bytePtr) << (BYTE_SIZE * i));
 
-    return result;
+    return create_word_from_bytes(memLoc);
 }
 
 
