@@ -1,5 +1,5 @@
 #include "branch.h"
-#include "instruction_constants.h"
+#include "instruction_utils.h"
 
 #define BRANCH_OFFSET_MASK 0x00ffffff
 #define BRANCH_OFFSET_SHIFT 2
