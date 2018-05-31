@@ -7,18 +7,15 @@ struct Instruction {
     uint8_t b0, b1, b2, b3;
 };
 
+/*
+ * This allocates the memory and registers in the heap dynamically. The calloc() function initialises the allocated
+ * space to 0 so there is no need to do this manually.
+ */
 struct CPUState initialize_CPU()
 {
     uint8_t *memory = calloc(NUM_MEMORY_LOCATIONS, sizeof(uint8_t));
 
-    for (int i = 0; i < NUM_MEMORY_LOCATIONS; i += BYTES_PER_WORD)
-        clear_word(&memory[i]);
-
     uint32_t *regs = calloc(NUM_REGISTERS, sizeof(uint32_t));
-
-    for (int i = 0; i < NUM_REGISTERS; i++)
-        clear_register(&regs[i]);
-
 
     struct CPUState cpu;
     cpu.memory = memory;
