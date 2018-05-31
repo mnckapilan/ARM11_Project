@@ -9,9 +9,9 @@
     Patrick Henderson\\
     \and
     Sukant Roy\\
-    \and 
+    \and
   	Kapilan Manu Neethi Cholan\\
-  	\and 
+  	\and
   	Jordan Bunke
 }
 
@@ -22,7 +22,20 @@
 	Group organisation content here.
 
 \section{Implementation Strategies}
-
-	Implementation strategies here.
+    I have implemented the execution of the single data transfer instruction. The
+    main challenge initially was to figure out how to extract the relevant bits from
+    the 32 bit instruction. I decided to use bit masks, which I defined as hexadecimal
+    constants in the source file "SingleDataTransfer.c". I will be able to use this
+    approach for the assembler (part 2). I will also be able to use the constants
+    I defined in the header file I created ("SingleDataTransfer.h"), corresponding
+    to my instruction field indexes, as well as the constant bit masks I defined in
+    the source file, for each field in the instruction. My header file
+    consists of #define constants and function declarations, corresponding to all
+    the functions defined in the C source file except the one which executes the
+    instruction itself. I believe the functions declared in the header file are useful to
+    other group members, especially the person implementing the data processing instruction.
+    My source file has a main function which executes the instruction, as well as helper functions
+    used by the execute function, which perform specific jobs, for example transferring data or
+    computing a memory address. This ensured my execute function wasn't too long.
 
 \end{document}
