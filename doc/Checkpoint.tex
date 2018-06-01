@@ -24,18 +24,19 @@
 \section{Implementation Strategies}
     I have implemented the execution of the single data transfer instruction. The
     main challenge initially was to figure out how to extract the relevant bits from
-    the 32 bit instruction. I decided to use bit masks, which I defined as hexadecimal
-    constants in the source file "SingleDataTransfer.c". I will be able to use this
-    approach for the assembler (part 2). I will also be able to use the constants
-    I defined in the header file I created ("SingleDataTransfer.h"), corresponding
-    to my instruction field indexes, as well as the constant bit masks I defined in
-    the source file, for each field in the instruction. My header file
-    consists of #define constants and function declarations, corresponding to all
-    the functions defined in the C source file except the one which executes the
-    instruction itself. I believe the functions declared in the header file are useful to
-    other group members, especially the person implementing the data processing instruction.
-    My source file has a main function which executes the instruction, as well as helper functions
-    used by the execute function, which perform specific jobs, for example transferring data or
-    computing a memory address. This ensured my execute function wasn't too long.
+    the instruction. I decided to use bit masks, which I defined as hexadecimal
+    constants in the source file. I will be able to use this approach for the assembler.
+    I will also be able to use the constants corresponding to my instruction field
+    indexes, as well as the constant bit masks for extracting each field in the
+    instruction, all of which I defined in the source file using #define. My header
+    file consists of a single function declaration, for the function which executes
+    the instruction itself. None of the other functions defined in my source file
+    are useful to other group members: they are all used for executing my specific
+    instruction type, so are only relevant to my source file. All the constants I
+    have defined for executing my instruction are local to my source file, so don't
+    need to be defined in the header file. My source file has a function which
+    executes the instruction, as well as helper functions used by this function,
+    which perform smaller tasks, for example transferring data or computing a memory
+    address. This ensures my execute function isn't too long.
 
 \end{document}
