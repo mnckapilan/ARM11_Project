@@ -5,7 +5,8 @@
 #ifndef ARM11_09_EMULATOR_DATA_PROCESSING_H
 #define ARM11_09_EMULATOR_DATA_PROCESSING_H
 
-#define MASK_IMM 00000000000000000000000011111111b
+#define MASK_IMM 0x000000ff
+#define MASK_BIT_FOUR 0x00000010
 
 typedef struct cpsr {
     int n;
@@ -27,6 +28,13 @@ typedef enum {
     MOV = 13 /* op2 */
 } OPCODE;
 
+typedef enum shift_type {
+    LSL = 0,
+    LSR = 1,
+    ASR = 2,
+    ROR = 3
+} SHIFT_TYPE;
+
 typedef struct data_processing {
     OPCODE opcode;
     uint32_t rn;
@@ -36,6 +44,8 @@ typedef struct data_processing {
     int s;
 } data_processing;
 
+
+// clashes with implementation in CPUstate
 typedef struct emulator_state {
     data_processing *data_pro;
     uint32_t *reg;
@@ -43,8 +53,11 @@ typedef struct emulator_state {
     cpsr *cpsr_flags;
 };
 
-void setZ(emulator_state *state, uint32_t res);
-void setN(emulator_state *state, uint32_t res);
+void set_z(emulator_state *state, uint32_t res);
+void set_n(emulator_state *state, uint32_t res);
+void set_c_add(emulator_state *state, uint32_t arg1, uint32_t arg2);
+void set_c_sub(emulator_state *state, uint32_t arg1, uint32_t arg2);
+void set_c(emulator_state *state, int carry_out);
 uint32_t rotate_right(uint32_t num);
 void execute_data_proc(emulator_state *state);
 

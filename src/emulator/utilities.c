@@ -12,6 +12,12 @@ uint32_t bits_extract(uint32_t value, int begin, int end)
     return (value >> begin) & mask;
 }
 
+int bits_extract(int value, int begin, int end)
+{
+    int mask = (1 << (end - begin)) - 1;
+    return (value >> begin) & mask;
+}
+
 /* Returns 1 if the condition is satisfied, 0 otherwise */
 uint32_t check_condition(uint32_t instr, struct CPUState cpu, uint32_t mask)
 {

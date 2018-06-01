@@ -8,7 +8,7 @@
 
 struct CPUState
 {
-	uint8_t *memory ;
+	uint8_t *memory;
 	uint32_t *regs;
 };
 
