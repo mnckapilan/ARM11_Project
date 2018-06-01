@@ -16,6 +16,7 @@
 #define CPSR_V 0x10000000
 
 uint32_t bits_extract(uint32_t value, int begin, int end);
+int bits_extract(int value, int begin, int end);
 
 /* Returns 1 if the condition is satisfied, 0 otherwise */
 uint32_t check_condition(uint32_t instr, struct CPUState cpu, uint32_t mask);
