@@ -4,24 +4,18 @@
 #include <stdio.h>
 
 struct Instruction {
-    uint8_t byte0;
-    uint8_t byte1;
-    uint8_t byte2;
-    uint8_t byte3;
+    uint8_t b0, b1, b2, b3;
 };
 
+/*
+ * This allocates the memory and registers in the heap dynamically. The calloc() function initialises the allocated
+ * space to 0 so there is no need to do this manually.
+ */
 struct CPUState initialize_CPU()
 {
     uint8_t *memory = calloc(NUM_MEMORY_LOCATIONS, sizeof(uint8_t));
 
-    for (int i = 0; i < NUM_MEMORY_LOCATIONS; i += BYTES_PER_WORD)
-        clear_word(&memory[i]);
-
     uint32_t *regs = calloc(NUM_REGISTERS, sizeof(uint32_t));
-
-    for (int i = 0; i < NUM_REGISTERS; i++)
-        clear_register(&regs[i]);
-
 
     struct CPUState cpu;
     cpu.memory = memory;
@@ -91,8 +85,9 @@ void read_instructions(FILE* file, struct CPUState cpu)
     struct Instruction instr;
     uint32_t size = get_size(file) / BYTES_PER_WORD;
 
-    for (i = 0; i < size; i++) {
+    for (i = 0; i < size; i++)
+    {
         fread(&instr, sizeof(struct Instruction), 1, file);
-        write_to_memory(cpu, i * BYTES_PER_WORD, create_word_from_bytes(&instr.byte0));
+        write_to_memory(cpu, i * BYTES_PER_WORD, create_word_from_bytes(&instr.b0));
     }
 }
