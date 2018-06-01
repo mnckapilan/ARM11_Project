@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <stdint.h>
 
-/* Need to create a function to write to a register */
+/* Function to write to a register */
 void write_register(uint32_t *reg, uint32_t val)
 {
     (*reg) = val;
 }
 
-/* Need to create a function to read from a register */
+/* Function to read from a register */
 uint32_t read_register(uint32_t *reg)
 {
     return (*reg);

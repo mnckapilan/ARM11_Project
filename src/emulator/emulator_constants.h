@@ -7,7 +7,6 @@
 #define WORD_SIZE 32
 #define BYTE_SIZE 8
 #define BYTES_PER_WORD 4
-
 #define PC_INDEX 15
 #define CPSR_INDEX 16
 

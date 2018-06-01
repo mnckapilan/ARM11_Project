@@ -2,8 +2,8 @@
 // Created by Kapilan M on 30/05/2018.
 //
 
-#ifndef ARM11_09_EMULATOR_MULTIPLY_H
-#define ARM11_09_EMULATOR_MULTIPLY_H
+#ifndef EMULATOR_MULTIPLY_H
+#define EMULATOR_MULTIPLY_H
 
 #include <stdint.h>
 #include "emulator_cpu.h"
