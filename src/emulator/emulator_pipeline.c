@@ -13,6 +13,11 @@
 #define SINGLE_DATA_TRANSFER_FORMAT 0x04000000
 #define BRANCH_FORMAT 0x0a000000
 
+/*
+ * The order of the decoding is set out such that the multiply mask is applied before the
+ * data processing one since a multiply instruction would be categorized as a data processing
+ * one if applied in the reverse order.
+ */
 instr_ptr decode(uint32_t instr) {
     if ((instr & MULTIPLY_MASK) == MULTIPLY_FORMAT)
         return &multiply;
