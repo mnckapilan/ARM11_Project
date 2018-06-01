@@ -2,7 +2,6 @@
 // Created by Kapilan M on 30/05/2018.
 //
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -26,18 +25,27 @@ uint8_t get_bit(uint32_t instr, uint32_t mask) {
     return 1;
 }
 
-/* This applies the mask and shifts the bits which identify the register
+/*
+ * This applies the mask and shifts the bits which identify the register
  * down to the lowest order nibble which is then returned
  */
 uint8_t get_register(uint32_t instr, uint32_t mask) {
     return (uint8_t)((instr & mask) >> mask);
 }
 
+/*
+ * This function first obtains the CPSR bits for C and V and retains their values.
+ * Then it sets the values of N and Z accordingly
+ */
 void static set_CPSR(int32_t val, struct CPUState cpu) {
+    uint32_t currCPSR = read_from_register(cpu, CPSR_INDEX);
+    uint32_t newCPSR = (currCPSR & CPSR_C) + (currCPSR & CPSR_V);
     if (val < 0)
-        write_to_register(cpu, CPSR_INDEX, CPSR_N);
+        newCPSR += CPSR_N;
     else if (val == 0)
-        write_to_register(cpu, CPSR_INDEX, CPSR_Z); // might be incorrect
+        newCPSR += CPSR_Z;
+
+    write_to_register(cpu, CPSR_INDEX, newCPSR);
 }
 
 /* PRE: instruction is a multiply one */
