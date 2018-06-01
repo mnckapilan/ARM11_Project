@@ -1,10 +1,6 @@
-//
-// Created by Sukant Roy on 28/05/2018.
-//
-
 #include <stdint.h>
-#include "SingleDataTransfer.h"
-#include "emulator_cpu.h"
+#include "emulator_single_data_transfer.h"
+
 #define immediateMask 0x02000000
 #define pMask 0x01000000
 #define baseRegMask 0x000F0000
@@ -20,33 +16,32 @@
 #define rSRegMask 0x00000F00
 #define bottomByteMask 0x000000FF
 
-void execute_instruction(uint32_t instruction, struct CPUState cpu) {
-    uint16_t offset;
-    if (checkConditionCode(instruction, cpu) == 0) {
-        uint8_t immediateOffset = (instruction & immediateMask) >> I_INDEX;
-        uint8_t pBit = (instruction & pMask) >> P_INDEX;
-        uint8_t baseRegIndex = (instruction & baseRegMask) >> RN_INDEX;
-        uint32_t baseRegValue = read_from_register(cpu, baseRegIndex);
-        if (immediateOffset == 1) {
-            offset = interpret_offset_shifted_reg(cpu, instruction);
-        } else if (immediateOffset == 0) {
-            offset = instruction & offsetBitMask;
-        }
-        if (pBit == 1) {
-            uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-            if (address < NUM_MEMORY_LOCATIONS) {
-                uint16_t memoryAddress = address;
-                transferData(cpu, instruction, memoryAddress);
-            }
-        }
-       else if (pBit == 0) {
-            if (baseRegValue < NUM_MEMORY_LOCATIONS) {
-                uint16_t memAddress = baseRegValue;
-                transferData(cpu, instruction, memAddress);
-                uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-                write_to_register(cpu, baseRegIndex, address);
-            }
-        }
+#define COND_INDEX 28
+#define I_INDEX 25
+#define P_INDEX 24
+#define UP_INDEX 23
+#define L_INDEX 20
+#define RN_INDEX 16
+#define RD_INDEX 12
+
+uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t constantShiftAmount) {
+    uint32_t result;
+    if (shiftTypeCode == 0) {
+        return rMRegValue << constantShiftAmount;
+    }
+    else if (shiftTypeCode == 1) {
+        return rMRegValue >> constantShiftAmount;
+    }
+
+    else if (shiftTypeCode == 2) {
+        int32_t signedRmRegValue = rMRegValue;
+        result = signedRmRegValue >> constantShiftAmount;
+        return result;
+    }
+    else if (shiftTypeCode == 3) {
+        int32_t signedRmRegValue = rMRegValue;
+        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (noBits - constantShiftAmount));
+        return result;
     }
 }
 
@@ -97,7 +92,6 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
     }
 }
 
-
 int checkConditionCode(uint32_t instruction, struct CPUState cpu) {
     uint32_t cpsrContents = read_from_register(cpu, CPSR_INDEX);
     uint8_t statusFlagBits = cpsrContents >> 28;
@@ -108,23 +102,32 @@ int checkConditionCode(uint32_t instruction, struct CPUState cpu) {
     return 1;
 }
 
-uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t constantShiftAmount) {
-    uint32_t result;
-    if (shiftTypeCode == 0) {
-        return rMRegValue << constantShiftAmount;
-    }
-    else if (shiftTypeCode == 1) {
-        return rMRegValue >> constantShiftAmount;
-    }
-
-    else if (shiftTypeCode == 2) {
-        int32_t signedRmRegValue = rMRegValue;
-        result = signedRmRegValue >> constantShiftAmount;
-        return result;
-    }
-    else if (shiftTypeCode == 3) {
-        int32_t signedRmRegValue = rMRegValue;
-        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (noBits - constantShiftAmount));
-        return result;
+void single_data_transfer(uint32_t instruction, struct CPUState cpu) {
+    uint16_t offset;
+    if (checkConditionCode(instruction, cpu) == 0) {
+        uint8_t immediateOffset = (instruction & immediateMask) >> I_INDEX;
+        uint8_t pBit = (instruction & pMask) >> P_INDEX;
+        uint8_t baseRegIndex = (instruction & baseRegMask) >> RN_INDEX;
+        uint32_t baseRegValue = read_from_register(cpu, baseRegIndex);
+        if (immediateOffset == 1) {
+            offset = interpret_offset_shifted_reg(cpu, instruction);
+        } else if (immediateOffset == 0) {
+            offset = instruction & offsetBitMask;
+        }
+        if (pBit == 1) {
+            uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
+            if (address < NUM_MEMORY_LOCATIONS) {
+                uint16_t memoryAddress = address;
+                transferData(cpu, instruction, memoryAddress);
+            }
+        }
+        else if (pBit == 0) {
+            if (baseRegValue < NUM_MEMORY_LOCATIONS) {
+                uint16_t memAddress = baseRegValue;
+                transferData(cpu, instruction, memAddress);
+                uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
+                write_to_register(cpu, baseRegIndex, address);
+            }
+        }
     }
 }

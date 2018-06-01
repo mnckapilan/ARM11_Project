@@ -1,4 +1,4 @@
-#include "branch.h"
+#include "emulator_branch.h"
 #include "utilities.h"
 
 #define BRANCH_OFFSET_MASK 0x00ffffff

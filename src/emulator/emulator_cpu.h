@@ -22,12 +22,10 @@ void write_to_register(struct CPUState cpu, uint8_t Rn, uint32_t val);
 
 uint32_t read_from_register(struct CPUState cpu, uint8_t Rn);
 
-void incrementPC(struct CPUState cpu);
+void increment_PC(struct CPUState cpu);
 
-uint32_t getPC(struct CPUState cpu);
+uint32_t get_next_instruction(struct CPUState cpu);
 
 void read_instructions(FILE* file, struct CPUState cpu);
-
-
 
 #endif
