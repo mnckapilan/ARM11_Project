@@ -6,6 +6,7 @@
 #define UTILITIES_H
 
 #include <stdint.h>
+#include "emulator_cpu.h"
 
 #define CPSR_MASK 0xf0000000
 #define PC_PIPELINE_OFFSET 8

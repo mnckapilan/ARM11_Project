@@ -6,4 +6,4 @@
 
 void branch(uint32_t instr, struct CPUState cpu);
 
-#endif BRANCH_H
+#endif

@@ -3,7 +3,6 @@
 //
 
 #include "utilities.h"
-#include "emulator_cpu.h"
 
 //  takes bits between begin and end --> [begin,end)
 uint32_t bits_extract(uint32_t value, int begin, int end)

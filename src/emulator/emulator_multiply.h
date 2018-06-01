@@ -6,6 +6,8 @@
 #define ARM11_09_EMULATOR_MULTIPLY_H
 
 #include <stdint.h>
+#include "emulator_cpu.h"
 
 void multiply(uint32_t instr, struct CPUState cpu);
+
 #endif

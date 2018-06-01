@@ -1,22 +1,15 @@
 #include "branch.h"
-#include "instruction_utils.h"
+#include "utilities.h"
 
 #define BRANCH_OFFSET_MASK 0x00ffffff
 #define BRANCH_OFFSET_SHIFT 2
 #define BRANCH_SIGN_BIT_MASK 0x02000000
 #define BRANCH_SIGN_EXTEND 0xfc000000
 
-uint32_t check_condition(uint32_t instr, struct CPUState cpu)
-{
-    if ((read_from_register(cpu, CPSR_INDEX) & CPSR_MASK) == (instr & CPSR_MASK))
-        return 0;
-
-    return 1;
-}
 
 void branch(uint32_t instr, struct CPUState cpu)
 {
-    if (check_condition(instr, cpu))
+    if (check_condition(instr, cpu, CPSR_MASK) == 1)
     {
         uint32_t unsignedOffset = instr & BRANCH_OFFSET_MASK;
         unsignedOffset <<= BRANCH_OFFSET_SHIFT;

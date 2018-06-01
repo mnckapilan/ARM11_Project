@@ -9,7 +9,6 @@
 
 #include "emulator_multiply.h"
 #include "utilities.h"
-#include "emulator_cpu.h"
 
 #define ACC_MASK 0x00200000
 #define SET_MASK 0x00100000
