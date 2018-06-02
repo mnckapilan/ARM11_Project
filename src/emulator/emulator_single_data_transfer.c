@@ -24,6 +24,11 @@
 #define RN_INDEX 16
 #define RD_INDEX 12
 
+/* This function decodes the shift type bits in the 32 bit instruction (bits 5 and 6) for the case in which the offset is
+ * interpreted as a shifted register (I bit equals 1). It applies a shift operation to the value held in register Rm, with
+ * a specified shift amount (unsigned), and returns the result. The shift operation type is specified by the shift type
+ * code (0 - logical left shift, 1 - logical right shift, 2 - arithmetic right shift, 3 - rotate right).
+ */
 uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t constantShiftAmount) {
     uint32_t result;
     if (shiftTypeCode == 0) {
@@ -44,6 +49,12 @@ uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t 
         return result;
     }
 }
+
+/* This function interprets offset as a shifted register instead of an immediate offset (I bit = 1). A shift operation,
+ * specified by shift type bits, is applied to value of register rM. The shift amount depends on the value of bit 4 in
+ * from the offset. If bit 4 equals 0, the shift value is specified by a constant amount - 8 bit unsigned int. If bit 4
+ * equals 1, the shift amount is specified by another register, rS. The bottom byte of rS specifies the shift amount.
+ */
 
 uint16_t interpret_offset_shifted_reg(struct CPUState cpu, uint32_t instruction) {
     uint8_t rMRegIndex = instruction & rM_Mask;
@@ -68,6 +79,11 @@ uint16_t interpret_offset_shifted_reg(struct CPUState cpu, uint32_t instruction)
     return offset;
 }
 
+/* Transfers data from memory to a destination register or from a source register to  memory, depending on the value of
+ * the load bit. If load bit equals 1, word is loaded from memory (fetched using supplied memory address) into the dest
+ * register. If load bit equals 0, word read from source register is stored into memory at given address.
+ * Index of source/dest register is rdRegIndex.
+ */
 void transferData(struct CPUState cpu, uint32_t instruction, uint16_t memAddr) {
     uint8_t lBit = (instruction & lMask) >> L_INDEX;
     uint8_t rdRegIndex = (instruction & rdMask) >> RD_INDEX;
@@ -82,6 +98,9 @@ void transferData(struct CPUState cpu, uint32_t instruction, uint16_t memAddr) {
     }
 }
 
+/* Computes memory address to based on value of up bit. Uses value stored in base register Rn and previously computed offset
+ * value. Offset is either added or subtracted from base register.
+ */
 uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t instruction) {
     uint8_t upBit = (instruction & upMask) >> UP_INDEX;
     if (upBit == 1) {
@@ -92,6 +111,10 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
     }
 }
 
+/* Just before executing an instruction, the condition code (top 4 bits of the instruction) is checked, against the status
+ * flag bits in the CPSR register - top 4 bits in CPSR. If the condition field is satisfied by the status flags of the
+ * CPSR, i.e. condition code in instruction equals status flag bits, instruction is executed, otherwise it's ignored.
+ */
 int checkConditionCode(uint32_t instruction, struct CPUState cpu) {
     uint32_t cpsrContents = read_from_register(cpu, CPSR_INDEX);
     uint8_t statusFlagBits = cpsrContents >> 28;
@@ -102,6 +125,13 @@ int checkConditionCode(uint32_t instruction, struct CPUState cpu) {
     return 1;
 }
 
+/* Main function for executing single data transfer instruction. Computes unsigned offset - if I bit (immediateOffset)
+ * equals 1, offset is interpreted as a shifted register and its value is accordingly computed, otherwise offset
+ * interpreted as an immediate value. Value of base register is retrieved using baseRegIndex. If pBit equals 1 (pre-indexing),
+ * the offset is added/subtracted to the base register before transferring the data, otherwise (post-indexing), offset is
+ * added/subtracted to base register after transferring. Pre-indexing does not change value of base register, post-indexing
+ * does (by the offset).
+ */
 void single_data_transfer(uint32_t instruction, struct CPUState cpu) {
     uint16_t offset;
     if (checkConditionCode(instruction, cpu) == 0) {
