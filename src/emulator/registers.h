@@ -2,7 +2,7 @@
 #define EMULATOR_REGISTERS_H
 
 #include <stdint.h>
-#include "emulator_constants.h"
+#include <stdio.h>
 
 void clear_register(uint32_t *reg);
 

@@ -2,8 +2,7 @@
 #define EMULATOR_MEMORY_H
 
 #include <stdint.h>
-
-uint32_t create_word_from_bytes(uint8_t* firstBytePtr);
+#include "utilities.h"
 
 void clear_word(uint8_t *memLoc);
 
