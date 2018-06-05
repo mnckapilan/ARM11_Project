@@ -19,6 +19,7 @@
 #define CPSR_C 0x20000000
 #define CPSR_V 0x10000000
 #define BIT31_MASK 0x80000000
+#define LARGEST_VAL 0xffffffff
 #define BIT_SIZE 1
 #define REG_INDEX_SIZE 4
 

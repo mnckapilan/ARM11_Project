@@ -72,7 +72,7 @@ Operand2 interpret_reg_operand(uint32_t val, State cpu) {
     if (shiftOrigin == 0) {
 
         shiftMagnitude = bits_extract(val, OPERAND2_SHIFT_MAG_OFFSET,
-                                      OPERAND2_SHIFT_TYPE_OFFSET + OPERAND2_SHIFT_MAG_SIZE);
+                                      OPERAND2_SHIFT_MAG_OFFSET + OPERAND2_SHIFT_MAG_SIZE);
 
     } else if (shiftOrigin == 1) {
 
@@ -114,7 +114,7 @@ void dp_set_CPSR(uint32_t result, uint32_t cOut, State cpu) {
         newCPSR += CPSR_C;
     }
 
-    if ((result == 0) && (cOut == 0)) {
+    if (result == 0) {
         newCPSR += CPSR_Z;
     }
 
@@ -160,12 +160,26 @@ logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t d
     }
 }
 
+uint32_t max(uint32_t val1, uint32_t val2) {
+    if (val1 > val2) {
+        return val1;
+    }
+    return val2;
+}
+
+uint32_t min(uint32_t val1, uint32_t val2) {
+    if (val1 < val2) {
+        return val1;
+    }
+    return val2;
+}
+
 void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult) {
 
     uint32_t result = val1 + val2;
     uint32_t cOut = 0;
 
-    if ((val1 >= BIT31_MASK) && (val2 >= BIT31_MASK)) {
+    if ((LARGEST_VAL - max(val1, val2)) < (max(val1, val2) - min(val1, val2))) {
         cOut = 1;
     }
 
@@ -225,9 +239,9 @@ void data_processing(uint32_t instr, State cpu) {
 
             case MOV :
                 write_to_register(cpu, rd, val2.val);
-		if (s == 1) {
-			dp_set_CPSR(val2.val, val2.cOut, cpu);
-		}
+		        if (s == 1) {
+			        dp_set_CPSR(val2.val, val2.cOut, cpu);
+		        }
                 break;
 
             default :
