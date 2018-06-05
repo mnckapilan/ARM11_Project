@@ -26,7 +26,7 @@ Operand2 arithmetic_shift_right(uint32_t val, uint32_t shiftMagnitude) {
     assert(shiftMagnitude < WORD_SIZE);
 
     uint32_t signBit = bits_extract(val, WORD_SIZE - 1, WORD_SIZE);
-    uint32_t upperOrderBits = ((signBit << shiftMagnitude + 1) - 1) << (WORD_SIZE - shiftMagnitude - 1);
+    uint32_t upperOrderBits = ((signBit << (shiftMagnitude + 1)) - 1) << (WORD_SIZE - shiftMagnitude - 1);
 
     Operand2 result;
 
@@ -102,9 +102,7 @@ Operand2 interpret_reg_operand(uint32_t val, State cpu) {
             break;
     }
 
-    if (shiftFunction != NULL) {
-        return shiftFunction(regContents, shiftMagnitude);
-    }
+    return shiftFunction(regContents, shiftMagnitude);
 }
 
 /* PRE: CPSR flag is set */
@@ -189,7 +187,6 @@ void data_processing(uint32_t instr, State cpu) {
         uint32_t s = bits_extract(instr, S_OFFSET, S_OFFSET + BIT_SIZE);
         uint32_t rn = bits_extract(instr, RN_OFFSET, RN_OFFSET + REG_INDEX_SIZE);
         uint32_t rd = bits_extract(instr, RD_OFFSET, RD_OFFSET + REG_INDEX_SIZE);
-        uint32_t operand2 = bits_extract(instr, OPERAND2_OFFSET, OPERAND2_OFFSET + OPERAND2_SIZE);
 
         uint32_t val1 = read_from_register(cpu, rn);
         Operand2 val2;
@@ -228,7 +225,9 @@ void data_processing(uint32_t instr, State cpu) {
 
             case MOV :
                 write_to_register(cpu, rd, val2.val);
-                dp_set_CPSR(val2.val, val2.cOut, cpu);
+		if (s == 1) {
+			dp_set_CPSR(val2.val, val2.cOut, cpu);
+		}
                 break;
 
             default :

@@ -1,10 +1,13 @@
 #include "halt.h"
 
-void pad_with_spaces(uint32_t val, uint32_t max_no_spaces) {
+void pad_with_spaces(int32_t val, uint32_t max_no_spaces) {
 
     uint32_t num_spaces = 0;
+
     if (val == 0) {
         val++;
+    } else if (val < 0) {
+	num_spaces++;
     }
 
     while (val > 0) {
@@ -22,9 +25,9 @@ void pad_with_spaces(uint32_t val, uint32_t max_no_spaces) {
 void print_register(uint32_t regIndex, State cpu) {
     uint32_t val = read_from_register(cpu, regIndex);
 
-    pad_with_spaces(val, MAX_NUM_DIGITS_PER_WORD);
+    pad_with_spaces(val, MAX_NUM_DIGITS_PER_WORD + 1);
 
-    fprintf(stdout, "%u (0x%08x)\n", val, val);
+    fprintf(stdout, "%i (0x%08x)\n", val, val);
 }
 
 void print_all_registers(State cpu) {
@@ -53,9 +56,12 @@ void print_little_endian(uint32_t val) {
 }
 
 void print_non_zero_memory(State cpu) {
-    fprintf(stdout, "Non-zero memory\n");
+    fprintf(stdout, "Non-zero memory:\n");
+
     for (uint32_t i = 0; i < NUM_MEMORY_LOCATIONS; i = i + BYTES_PER_WORD) {
+
         uint32_t val = read_from_memory(cpu, i);
+
         if (val != 0) {
             fprintf(stdout, "0x%08x: ", i);
             print_little_endian(val);

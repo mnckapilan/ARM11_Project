@@ -28,16 +28,16 @@
 #define OPERAND2_RS_OFFSET 8
 
 typedef enum {
-    AND = 0b0000,
-    EOR = 0b0001,
-    SUB = 0b0010,
-    RSB = 0b0011,
-    ADD = 0b0100,
-    TST = 0b1000,
-    TEQ = 0b1001,
-    CMP = 0b1010,
-    ORR = 0b1100,
-    MOV = 0b1101
+    AND = 0,
+    EOR = 1,
+    SUB = 2,
+    RSB = 3,
+    ADD = 4,
+    TST = 8,
+    TEQ = 9,
+    CMP = 10,
+    ORR = 12,
+    MOV = 13
 } Opcode;
 
 typedef struct {
@@ -46,10 +46,10 @@ typedef struct {
 } Operand2;
 
 typedef enum {
-    LSL = 0b00,
-    LSR = 0b01,
-    ASR = 0b10,
-    ROR = 0b11
+    LSL = 0,
+    LSR = 1,
+    ASR = 2,
+    ROR = 3
 } Shift;
 
 Operand2 logical_shift_left(uint32_t val, uint32_t shiftMagnitude);

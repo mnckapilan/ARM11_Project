@@ -85,9 +85,8 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
 
     if (upBit == 1) {
         return (baseRegValue + offset);
-    } else if (upBit == 0) {
-        return (baseRegValue - offset);
     }
+    return (baseRegValue - offset);
 }
 
 /* Just before executing an instruction, the condition code (top 4 bits of the instruction) is checked, against the status

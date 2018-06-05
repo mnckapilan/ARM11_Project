@@ -32,10 +32,9 @@ void write_to_memory(State cpu, uint32_t addr, uint32_t val) {
     }
 }
 
+/* PRE: Memory address is in bounds */
 uint32_t read_from_memory(State cpu, uint32_t addr) {
-    if (memory_in_bounds(addr) == 0) {
-        return read_word(&cpu.memory[addr]);
-    }
+    return read_word(&cpu.memory[addr]);
 }
 
 uint8_t register_in_bounds(uint32_t Rn) {
@@ -53,10 +52,9 @@ void write_to_register(State cpu, uint32_t Rn, uint32_t val) {
     }
 }
 
+/* PRE: Register index is in bounds */
 uint32_t read_from_register(State cpu, uint32_t Rn) {
-    if (register_in_bounds(Rn) == 0) {
-        return read_register(&cpu.regs[Rn]);
-    }
+    return read_register(&cpu.regs[Rn]);
 }
 
 void increment_PC(State cpu) {

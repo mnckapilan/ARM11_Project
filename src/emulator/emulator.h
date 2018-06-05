@@ -35,13 +35,13 @@ typedef struct {
 } Stage;
 
 typedef enum {
-    EQ = 0b0000,
-    NE = 0b0001,
-    GE = 0b1010,
-    LT = 0b1011,
-    GT = 0b1100,
-    LE = 0b1101,
-    AL = 0b1110
+    EQ = 0,
+    NE = 1,
+    GE = 10,
+    LT = 11,
+    GT = 12,
+    LE = 13,
+    AL = 14
 } ConditionCode;
 
 State initialize_CPU();
