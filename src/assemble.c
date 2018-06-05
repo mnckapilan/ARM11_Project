@@ -1,6 +1,7 @@
 #include <stdlib.h>
-#include "emulator_io.h"
-#include "emulator_constants.h"
+#include <stdio.h>
+#include "io.h"
+#include "utilities.h"
 
 #define NO_EXPECTED_ARGS 3
 
