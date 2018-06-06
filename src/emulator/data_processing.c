@@ -192,9 +192,10 @@ void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPS
     }
 }
 
-void data_processing(uint32_t instr, State cpu) {
+uint32_t data_processing(uint32_t instr, State cpu) {
     if (check_condition(instr, cpu) == 0) {
         fprintf(stderr, "Condition for data processing instruction is not satisfied.\n");
+        return 0;
     } else {
         uint32_t i = bits_extract(instr, I_OFFSET, I_OFFSET + BIT_SIZE);
         Opcode opcode = bits_extract(instr, OPCODE_OFFSET, OPCODE_OFFSET + OPCODE_SIZE);
@@ -250,4 +251,6 @@ void data_processing(uint32_t instr, State cpu) {
         }
 
     }
+
+    return 1;
 }

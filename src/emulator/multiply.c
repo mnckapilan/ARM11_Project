@@ -17,7 +17,7 @@ void mul_set_CPSR(int32_t val, State cpu) {
 }
 
 /* PRE: instruction is a multiply one */
-void multiply(uint32_t instr, State cpu) {
+uint32_t multiply(uint32_t instr, State cpu) {
 
     if (check_condition(instr, cpu) != 0) {
         uint32_t set = bits_extract(instr, MULT_SET_INDEX, MULT_SET_INDEX + BIT_SIZE);
@@ -38,8 +38,11 @@ void multiply(uint32_t instr, State cpu) {
             mul_set_CPSR(result, cpu);
         }
 
-    } else {
-        fprintf(stderr, "Condition for multiply instruction not satisfied.\n");
+        return 1;
+
     }
+
+    fprintf(stderr, "Condition for multiply instruction not satisfied.\n");
+    return 0;
 }
 

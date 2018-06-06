@@ -17,6 +17,6 @@
 
 void mul_set_CPSR(int32_t val, State cpu);
 
-void multiply(uint32_t instr, State cpu);
+uint32_t multiply(uint32_t instr, State cpu);
 
 #endif

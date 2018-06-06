@@ -89,21 +89,6 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
     return (baseRegValue - offset);
 }
 
-/* Just before executing an instruction, the condition code (top 4 bits of the instruction) is checked, against the status
- * flag bits in the CPSR register - top 4 bits in CPSR. If the condition field is satisfied by the status flags of the
- * CPSR, i.e. condition code in instruction equals status flag bits, instruction is executed, otherwise it's ignored.
- */
-int checkConditionCode(uint32_t instruction, State cpu) {
-    uint32_t cpsrContents = read_from_register(cpu, CPSR_INDEX);
-    uint8_t statusFlagBits = cpsrContents >> 28;
-    uint8_t cond = instruction >> COND_INDEX;
-
-    if (statusFlagBits == cond) {
-        return 0;
-    }
-    return 1;
-}
-
 /* Main function for executing single data transfer instruction. Computes unsigned offset - if I bit (immediateOffset)
  * equals 1, offset is interpreted as a shifted register and its value is accordingly computed, otherwise offset
  * interpreted as an immediate value. Value of base register is retrieved using baseRegIndex. If pBit equals 1 (pre-indexing),
@@ -111,9 +96,9 @@ int checkConditionCode(uint32_t instruction, State cpu) {
  * added/subtracted to base register after transferring. Pre-indexing does not change value of base register, post-indexing
  * does (by the offset).
  */
-void single_data_transfer(uint32_t instruction, State cpu) {
+uint32_t single_data_transfer(uint32_t instruction, State cpu) {
     uint16_t offset;
-    if (checkConditionCode(instruction, cpu) != 0) {
+    if (check_condition(instruction, cpu) != 0) {
         uint8_t immediateOffset = (instruction & immediateMask) >> I_INDEX;
         uint8_t pBit = (instruction & pMask) >> P_INDEX;
         uint8_t baseRegIndex = (instruction & baseRegMask) >> RN_INDEX;
@@ -141,7 +126,10 @@ void single_data_transfer(uint32_t instruction, State cpu) {
                 write_to_register(cpu, baseRegIndex, address);
             }
         }
-    } else {
-        fprintf(stderr, "Condition for single data transfer instruction not satisfied.\n");
+
+        return 1;
     }
+
+    fprintf(stderr, "Condition for single data transfer instruction not satisfied.\n");
+    return 0;
 }

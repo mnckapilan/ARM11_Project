@@ -17,6 +17,6 @@ void print_all_registers(State cpu);
 
 void print_non_zero_memory(State cpu);
 
-void halt(uint32_t instr, State cpu);
+uint32_t halt(uint32_t instr, State cpu);
 
 #endif

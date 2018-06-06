@@ -24,7 +24,7 @@
 #define HALT_MASK 0x00000000
 #define HALT_FORMAT 0x00000000
 
-typedef void (*Instr_ptr)(uint32_t, State);
+typedef uint32_t (*Instr_ptr)(uint32_t, State);
 
 typedef struct {
     uint8_t fetchedEmpty;

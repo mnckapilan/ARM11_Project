@@ -66,25 +66,28 @@ uint32_t get_next_instruction(State cpu) {
 }
 
 uint32_t get_Z(uint32_t instr) {
-    return bits_extract(instr, CPSR_Z, CPSR_Z + BIT_SIZE);
+    return bits_extract(instr, CPSR_Z_INDEX, CPSR_Z_INDEX + BIT_SIZE);
 }
 
 uint32_t get_N(uint32_t instr) {
-    return bits_extract(instr, CPSR_N, CPSR_N + BIT_SIZE);
+    return bits_extract(instr, CPSR_N_INDEX, CPSR_N_INDEX + BIT_SIZE);
 }
 
 uint32_t get_V(uint32_t instr) {
-    return bits_extract(instr, CPSR_V, CPSR_V + BIT_SIZE);
+    return bits_extract(instr, CPSR_V_INDEX, CPSR_V_INDEX + BIT_SIZE);
 }
 
 /* Returns non zero if the condition is satisfied, 0 otherwise */
 uint32_t check_condition(uint32_t instr, State cpu) {
     ConditionCode conditionCode = bits_extract(instr, CPSR_FLAGS_OFFSET, CPSR_FLAGS_OFFSET + NUM_CPSR_FLAGS);
 
+    uint32_t z = 0;
+
     switch (conditionCode) {
 
         case EQ :
-            return get_Z(instr);
+            z = get_Z(instr);
+            return z;
 
         case NE :
             return ~get_Z(instr);
@@ -174,9 +177,9 @@ void run_emulator(State cpu) {
 
         if ((pipelineStage.decodedEmpty == 0) && (pipelineStage.decoded != NULL)) {
 
-            pipelineStage.decoded(pipelineStage.decodedInstr, cpu);
+            uint32_t executed = pipelineStage.decoded(pipelineStage.decodedInstr, cpu);
 
-            if (pipelineStage.decoded == &branch) {
+            if ((pipelineStage.decoded == &branch) && (executed == 1)) {
                 pipelineStage.decodedEmpty = 1;
                 pipelineStage.fetchedEmpty = 1;
             }

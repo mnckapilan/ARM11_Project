@@ -68,6 +68,6 @@ void logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint3
 
 void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult);
 
-void data_processing(uint32_t instr, State cpu);
+uint32_t data_processing(uint32_t instr, State cpu);
 
 #endif

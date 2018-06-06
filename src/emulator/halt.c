@@ -7,7 +7,8 @@ void pad_with_spaces(int32_t val, uint32_t max_no_spaces) {
     if (val == 0) {
         val++;
     } else if (val < 0) {
-	num_spaces++;
+        num_spaces++;
+        val = -val;
     }
 
     while (val > 0) {
@@ -70,7 +71,8 @@ void print_non_zero_memory(State cpu) {
     }
 }
 
-void halt(uint32_t instr, State cpu) {
+uint32_t halt(uint32_t instr, State cpu) {
     print_all_registers(cpu);
     print_non_zero_memory(cpu);
+    return 0;
 }

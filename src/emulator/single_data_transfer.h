@@ -19,7 +19,6 @@
 #define rSRegMask 0x00000F00
 #define bottomByteMask 0x000000FF
 
-#define COND_INDEX 28
 #define I_INDEX 25
 #define P_INDEX 24
 #define UP_INDEX 23
@@ -35,8 +34,6 @@ void transferData(State cpu, uint32_t instruction, uint16_t memAddr);
 
 uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t instruction);
 
-int checkConditionCode(uint32_t instruction, State cpu);
-
-void single_data_transfer(uint32_t instruction, State cpu);
+uint32_t single_data_transfer(uint32_t instruction, State cpu);
 
 #endif
