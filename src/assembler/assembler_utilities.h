@@ -4,11 +4,9 @@
 
 #ifndef ARM11_09_ASSEMBLER_DEFINITIONS_H
 #define ARM11_09_ASSEMBLER_DEFINITIONS_H
-
 #include <stdint.h>
 
-
-typedef struct instruction {
+typedef struct instructions {
 
     char *phrase;
     uint32_t operand2;
