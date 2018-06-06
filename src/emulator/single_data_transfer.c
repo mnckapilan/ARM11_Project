@@ -23,7 +23,7 @@ uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t 
     } else if (shiftTypeCode == 3) {
 
         int32_t signedRmRegValue = rMRegValue;
-        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (noBits - constantShiftAmount));
+        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount));
     }
 
     return result;
@@ -36,20 +36,20 @@ uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t 
  */
 
 uint16_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
-    uint8_t rMRegIndex = instruction & rM_Mask;
+    uint8_t rMRegIndex = bits_extract(instruction, RM_INDEX, RM_INDEX + REG_WIDTH);
     uint32_t rMRegValue = read_from_register(cpu, rMRegIndex);
-    uint8_t bit4 = (instruction & bit4Mask) >> 4;
-    uint8_t shiftTypeCode = (instruction & shiftTypeMask) >> 5;
+    uint8_t bit4 = bits_extract(instruction, BIT4_INDEX, BIT4_INDEX + 1);
+    uint8_t shiftTypeCode = bits_extract(instruction, SHIFT_TYPE_INDEX, SHIFT_TYPE_INDEX + SHIFT_TYPE_WIDTH);
     uint32_t offset_32bit = 0;
     uint16_t offset = 0;
 
     if (bit4 == 1) {
-        uint8_t rSRegIndex = (instruction & rSRegMask) >> 8;
+        uint8_t rSRegIndex = bits_extract(instruction, RS_INDEX, RS_INDEX + REG_WIDTH);
         uint32_t rSRegValue = read_from_register(cpu, rSRegIndex);
-        uint8_t shiftAmount = rSRegValue & bottomByteMask;
+        uint8_t shiftAmount = bits_extract(rSRegValue, 0, BYTE_WIDTH);;
         offset_32bit = interpretShiftCode(shiftTypeCode, rMRegValue, shiftAmount);
     } else if (bit4 == 0) {
-        uint8_t constantShiftAmount = (instruction & const5bitShiftMask) >> 7;
+        uint8_t constantShiftAmount = bits_extract(instruction, CONST_5BIT_INDEX, CONST_5BIT_INDEX + 5);
         offset_32bit = interpretShiftCode(shiftTypeCode, rMRegValue, constantShiftAmount);
     }
     if (offset_32bit < NUM_MEMORY_LOCATIONS) {
@@ -64,8 +64,8 @@ uint16_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
  * Index of source/dest register is rdRegIndex.
  */
 void transferData(State cpu, uint32_t instruction, uint16_t memAddr) {
-    uint8_t lBit = (instruction & lMask) >> L_INDEX;
-    uint8_t rdRegIndex = (instruction & rdMask) >> RD_INDEX;
+    uint8_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
+    uint8_t rdRegIndex = bits_extract(instruction, RD_INDEX, RD_INDEX + REG_WIDTH);
     uint32_t memWord;
 
     if (lBit == 1) {
@@ -81,7 +81,7 @@ void transferData(State cpu, uint32_t instruction, uint16_t memAddr) {
  * value. Offset is either added or subtracted from base register.
  */
 uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t instruction) {
-    uint32_t upBit = (instruction & upMask) >> UP_INDEX;
+    uint32_t upBit = bits_extract(instruction, UP_INDEX, UP_INDEX + 1);
 
     if (upBit == 1) {
         return (baseRegValue + offset);
@@ -89,6 +89,10 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
     return (baseRegValue - offset);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1c4445e614429fbe5c8aab1508feef5d4de27af8
 /* Main function for executing single data transfer instruction. Computes unsigned offset - if I bit (immediateOffset)
  * equals 1, offset is interpreted as a shifted register and its value is accordingly computed, otherwise offset
  * interpreted as an immediate value. Value of base register is retrieved using baseRegIndex. If pBit equals 1 (pre-indexing),
@@ -99,14 +103,20 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
 uint32_t single_data_transfer(uint32_t instruction, State cpu) {
     uint16_t offset;
     if (check_condition(instruction, cpu) != 0) {
+<<<<<<< HEAD
         uint8_t immediateOffset = (instruction & immediateMask) >> I_INDEX;
         uint8_t pBit = (instruction & pMask) >> P_INDEX;
         uint8_t baseRegIndex = (instruction & baseRegMask) >> RN_INDEX;
+=======
+        uint8_t immediateOffset = bits_extract(instruction, I_INDEX, I_INDEX + 1);
+        uint8_t pBit = bits_extract(instruction, P_INDEX, P_INDEX + 1);
+        uint8_t baseRegIndex = bits_extract(instruction, RN_INDEX, RN_INDEX + REG_WIDTH);
+>>>>>>> 1c4445e614429fbe5c8aab1508feef5d4de27af8
         uint32_t baseRegValue = read_from_register(cpu, baseRegIndex);
         if (immediateOffset == 1) {
             offset = interpret_offset_shifted_reg(cpu, instruction);
         } else if (immediateOffset == 0) {
-            offset = instruction & offsetBitMask;
+            offset = bits_extract(instruction, OFFSET_INDEX, OFFSET_INDEX + OFFSET_WIDTH);
         }
 
         if (pBit == 1) {
