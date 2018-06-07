@@ -31,6 +31,6 @@ void transferData(State cpu, uint32_t instruction, uint16_t memAddr);
 
 uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t instruction);
 
-void single_data_transfer(uint32_t instruction, State cpu);
+uint32_t single_data_transfer(uint32_t instruction, State cpu);
 
 #endif

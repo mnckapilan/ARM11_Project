@@ -23,7 +23,8 @@ uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t 
     } else if (shiftTypeCode == 3) {
 
         int32_t signedRmRegValue = rMRegValue;
-        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount));
+        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount)); // change this implementation
+                // and work with unsigned values/ints (uint32_t)
     }
 
     return result;
@@ -63,7 +64,7 @@ uint16_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
  * register. If load bit equals 0, word read from source register is stored into memory at given address.
  * Index of source/dest register is rdRegIndex.
  */
-void transferData(State cpu, uint32_t instruction, uint16_t memAddr) {
+ void transferData(State cpu, uint32_t instruction, uint16_t memAddr) {
     uint8_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
     uint8_t rdRegIndex = bits_extract(instruction, RD_INDEX, RD_INDEX + REG_WIDTH);
     uint32_t memWord;
@@ -97,7 +98,7 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t
  * added/subtracted to base register after transferring. Pre-indexing does not change value of base register, post-indexing
  * does (by the offset).
  */
-void single_data_transfer(uint32_t instruction, State cpu) {
+uint32_t single_data_transfer(uint32_t instruction, State cpu) {
     uint16_t offset;
     if (check_condition(instruction, cpu) != 0) {
         uint8_t immediateOffset = bits_extract(instruction, I_INDEX, I_INDEX + 1);
@@ -127,7 +128,8 @@ void single_data_transfer(uint32_t instruction, State cpu) {
                 write_to_register(cpu, baseRegIndex, address);
             }
         }
+        return 1;
     } else {
-        fprintf(stderr, "Condition for single data transfer instruction not satisfied.\n");
+        return 0;
     }
 }
