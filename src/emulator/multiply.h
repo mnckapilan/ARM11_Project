@@ -8,7 +8,7 @@
 #include "utilities.h"
 #include "emulator.h"
 
-#define MULT_ACC_INDEX 0x00200000
+#define MULT_ACC_INDEX 21
 #define MULT_SET_INDEX 20
 #define MULT_RD_INDEX 16
 #define MULT_RN_INDEX 12

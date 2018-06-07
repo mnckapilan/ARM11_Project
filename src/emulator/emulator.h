@@ -62,6 +62,12 @@ void increment_PC(State cpu);
 
 uint32_t get_next_instruction(State cpu);
 
+uint32_t get_Z(uint32_t val);
+
+uint32_t get_N(uint32_t val);
+
+uint32_t get_V(uint32_t val);
+
 uint32_t check_condition(uint32_t instr, State cpu);
 
 void read_instructions(FILE *file, State cpu);

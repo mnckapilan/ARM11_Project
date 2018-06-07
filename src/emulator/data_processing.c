@@ -4,9 +4,13 @@ Operand2 logical_shift_left(uint32_t val, uint32_t shiftMagnitude) {
     assert(shiftMagnitude < WORD_SIZE);
 
     Operand2 result;
+    result.val = val;
+    result.cOut = 0;
 
-    result.cOut = bits_extract(val, WORD_SIZE - shiftMagnitude, WORD_SIZE - shiftMagnitude + BIT_SIZE);
-    result.val = val << shiftMagnitude;
+    if (shiftMagnitude > 0) {
+        result.cOut = bits_extract(val, WORD_SIZE - shiftMagnitude, WORD_SIZE - shiftMagnitude + BIT_SIZE);
+        result.val = val << shiftMagnitude;
+    }
 
     return result;
 }
@@ -15,9 +19,13 @@ Operand2 logical_shift_right(uint32_t val, uint32_t shiftMagnitude) {
     assert (shiftMagnitude < WORD_SIZE);
 
     Operand2 result;
+    result.val = val;
+    result.cOut = 0;
 
-    result.cOut = bits_extract(val, shiftMagnitude - 1, shiftMagnitude);
-    result.val = val >> shiftMagnitude;
+    if (shiftMagnitude > 0) {
+        result.cOut = bits_extract(val, shiftMagnitude - 1, shiftMagnitude);
+        result.val = val >> shiftMagnitude;
+    }
 
     return result;
 }
@@ -29,9 +37,13 @@ Operand2 arithmetic_shift_right(uint32_t val, uint32_t shiftMagnitude) {
     uint32_t upperOrderBits = ((signBit << (shiftMagnitude + 1)) - 1) << (WORD_SIZE - shiftMagnitude - 1);
 
     Operand2 result;
+    result.val = val;
+    result.cOut = 0;
 
-    result.cOut = bits_extract(val, shiftMagnitude - 1, shiftMagnitude);
-    result.val = (val >> shiftMagnitude) + upperOrderBits;
+    if (shiftMagnitude > 0) {
+        result.cOut = bits_extract(val, shiftMagnitude - 1, shiftMagnitude);
+        result.val = (val >> shiftMagnitude) + upperOrderBits;
+    }
 
     return result;
 }
@@ -44,7 +56,7 @@ Operand2 rotate_right(uint32_t val, uint32_t rotate) {
     result.cOut = 0;
 
     if (rotate > 0) {
-        result.val += bits_extract(val, 0, rotate) << (WORD_SIZE - rotate - 1);
+        result.val += bits_extract(val, 0, rotate) << (WORD_SIZE - rotate);
         result.cOut = bits_extract(val, rotate - 1, rotate);
     }
 
@@ -124,24 +136,24 @@ void dp_set_CPSR(uint32_t result, uint32_t cOut, State cpu) {
 }
 
 void
-logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t dest, uint32_t cOut, Opcode opcode) {
+logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t dest, uint32_t cOut, Opcode op) {
 
     uint32_t result = 0;
 
-    switch (opcode) {
+    switch (op) {
 
         case AND :
         case TST :
             result = val1 & val2;
-            if (opcode == AND) {
+            if (op == AND) {
                 write_to_register(cpu, dest, result);
             }
             break;
 
-        case EOR:
+        case EOR :
         case TEQ :
             result = val1 ^ val2;
-            if (opcode == EOR) {
+            if (op == EOR) {
                 write_to_register(cpu, dest, result);
             }
             break;
@@ -160,26 +172,33 @@ logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t d
     }
 }
 
-uint32_t max(uint32_t val1, uint32_t val2) {
-    if (val1 > val2) {
-        return val1;
-    }
-    return val2;
-}
+void arithmetic_op(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult, Opcode op) {
 
-uint32_t min(uint32_t val1, uint32_t val2) {
-    if (val1 < val2) {
-        return val1;
-    }
-    return val2;
-}
-
-void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult) {
-
-    uint32_t result = val1 + val2;
+    uint32_t result = 0;
     uint32_t cOut = 0;
 
-    if ((LARGEST_VAL - max(val1, val2)) < (max(val1, val2) - min(val1, val2))) {
+    switch(op) {
+
+        case ADD :
+            result = val1 + val2;
+            break;
+
+        case SUB :
+        case RSB :
+        case CMP :
+            result = val1 + (~(val2) + 1);
+            break;
+
+        default :
+            break;
+
+    }
+
+    if ((LARGEST_VAL - max(val1, val2)) < min(val1, val2)) {
+        cOut = 1;
+    }
+
+    if (((int32_t) val1 >= (int32_t) val2) && (op != ADD)) {
         cOut = 1;
     }
 
@@ -194,61 +213,58 @@ void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPS
 
 uint32_t data_processing(uint32_t instr, State cpu) {
     if (check_condition(instr, cpu) == 0) {
-        fprintf(stderr, "Condition for data processing instruction is not satisfied.\n");
         return 0;
-    } else {
-        uint32_t i = bits_extract(instr, I_OFFSET, I_OFFSET + BIT_SIZE);
-        Opcode opcode = bits_extract(instr, OPCODE_OFFSET, OPCODE_OFFSET + OPCODE_SIZE);
-        uint32_t s = bits_extract(instr, S_OFFSET, S_OFFSET + BIT_SIZE);
-        uint32_t rn = bits_extract(instr, RN_OFFSET, RN_OFFSET + REG_INDEX_SIZE);
-        uint32_t rd = bits_extract(instr, RD_OFFSET, RD_OFFSET + REG_INDEX_SIZE);
+    }
+    uint32_t i = bits_extract(instr, I_OFFSET, I_OFFSET + BIT_SIZE);
+    Opcode opcode = bits_extract(instr, OPCODE_OFFSET, OPCODE_OFFSET + OPCODE_SIZE);
+    uint32_t s = bits_extract(instr, S_OFFSET, S_OFFSET + BIT_SIZE);
+    uint32_t rn = bits_extract(instr, RN_OFFSET, RN_OFFSET + REG_INDEX_SIZE);
+    uint32_t rd = bits_extract(instr, RD_OFFSET, RD_OFFSET + REG_INDEX_SIZE);
 
-        uint32_t val1 = read_from_register(cpu, rn);
-        Operand2 val2;
+    uint32_t val1 = read_from_register(cpu, rn);
+    Operand2 val2;
 
-        if (i == 1) {
-            val2 = interpret_imm_operand(instr);
-        } else if (i == 0) {
-            val2 = interpret_reg_operand(instr, cpu);
-        }
+    if (i == 1) {
+        val2 = interpret_imm_operand(instr);
+    } else if (i == 0) {
+        val2 = interpret_reg_operand(instr, cpu);
+    }
 
-        switch (opcode) {
+    switch (opcode) {
 
-            case AND :
-            case EOR :
-            case TST :
-            case TEQ :
-            case ORR :
-                logical_op(val1, val2.val, s, cpu, rd, val2.cOut, opcode);
-                break;
+        case AND :
+        case EOR :
+        case TST :
+        case TEQ :
+        case ORR :
+            logical_op(val1, val2.val, s, cpu, rd, val2.cOut, opcode);
+            break;
 
-            case ADD :
-                add(val1, val2.val, cpu, rd, s, 1);
-                break;
+        case ADD :
+            arithmetic_op(val1, val2.val, cpu, rd, s, 1, opcode);
+            break;
 
-            case SUB :
-                add(val1, ~(val2.val) + 1, cpu, rd, s, 1);
-                break;
+        case SUB :
+            arithmetic_op(val1, val2.val, cpu, rd, s, 1, opcode);
+            break;
 
-            case RSB :
-                add(val2.val, ~(val1) + 1, cpu, rd, s, 1);
-                break;
+        case RSB :
+            arithmetic_op(val2.val, val1, cpu, rd, s, 1, opcode);
+            break;
 
-            case CMP :
-                add(val1, ~(val2.val) + 1, cpu, rd, s, 0);
-                break;
+        case CMP :
+            arithmetic_op(val1, val2.val, cpu, rd, s, 0, opcode);
+            break;
 
-            case MOV :
-                write_to_register(cpu, rd, val2.val);
-		        if (s == 1) {
-			        dp_set_CPSR(val2.val, val2.cOut, cpu);
-		        }
-                break;
+        case MOV :
+            write_to_register(cpu, rd, val2.val);
+            if (s == 1) {
+                dp_set_CPSR(val2.val, val2.cOut, cpu);
+            }
+            break;
 
-            default :
-                break;
-
-        }
+        default :
+            break;
 
     }
 

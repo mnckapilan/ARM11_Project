@@ -2,10 +2,7 @@
 
 uint32_t branch(uint32_t instr, State cpu) {
     if (check_condition(instr, cpu) == 0) {
-
-        fprintf(stderr, "Condition for branch instruction not satisfied.\n");
         return 0;
-
     }
 
     uint32_t unsignedOffset = instr & BRANCH_OFFSET_MASK;
@@ -20,7 +17,7 @@ uint32_t branch(uint32_t instr, State cpu) {
     if (PCVal >= 0) {
         write_to_register(cpu, PC_INDEX, PCVal);
     } else {
-        fprintf(stderr, "Attempted to branch to a negative address.");
+        printf("Attempted to branch to a negative value address.\n");
     }
 
     return 1;

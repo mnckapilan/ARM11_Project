@@ -17,5 +17,19 @@ uint32_t bits_extract(uint32_t value, uint32_t begin, uint32_t end) {
     return (value & mask) >> begin;
 }
 
+uint32_t max(uint32_t val1, uint32_t val2) {
+    if (val1 > val2) {
+        return val1;
+    }
+    return val2;
+}
+
+uint32_t min(uint32_t val1, uint32_t val2) {
+    if (val1 < val2) {
+        return val1;
+    }
+    return val2;
+}
+
 
 

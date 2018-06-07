@@ -19,7 +19,7 @@ State initialize_CPU() {
 
 uint8_t memory_in_bounds(uint32_t addr) {
     if (addr > (NUM_MEMORY_LOCATIONS - BYTES_PER_WORD)) {
-        fprintf(stderr, "Attempting to access memory location out of bounds.");
+        printf("Error: Out of bounds memory access at address 0x%08x\n", addr);
         return 1;
     }
 
@@ -39,7 +39,7 @@ uint32_t read_from_memory(State cpu, uint32_t addr) {
 
 uint8_t register_in_bounds(uint32_t Rn) {
     if (Rn >= NUM_REGISTERS) {
-        fprintf(stderr, "Attempting to access non existent register.");
+        printf("Error: Out of bounds register access with register %u\n", Rn);
         return 1;
     }
 
@@ -65,53 +65,52 @@ uint32_t get_next_instruction(State cpu) {
     return read_from_memory(cpu, read_register(&cpu.regs[PC_INDEX]));
 }
 
-uint32_t get_Z(uint32_t instr) {
-    return bits_extract(instr, CPSR_Z_INDEX, CPSR_Z_INDEX + BIT_SIZE);
+uint32_t get_Z(uint32_t val) {
+    return bits_extract(val, CPSR_Z_INDEX, CPSR_Z_INDEX + BIT_SIZE);
 }
 
-uint32_t get_N(uint32_t instr) {
-    return bits_extract(instr, CPSR_N_INDEX, CPSR_N_INDEX + BIT_SIZE);
+uint32_t get_N(uint32_t val) {
+    return bits_extract(val, CPSR_N_INDEX, CPSR_N_INDEX + BIT_SIZE);
 }
 
-uint32_t get_V(uint32_t instr) {
-    return bits_extract(instr, CPSR_V_INDEX, CPSR_V_INDEX + BIT_SIZE);
+uint32_t get_V(uint32_t val) {
+    return bits_extract(val, CPSR_V_INDEX, CPSR_V_INDEX + BIT_SIZE);
 }
 
 /* Returns non zero if the condition is satisfied, 0 otherwise */
 uint32_t check_condition(uint32_t instr, State cpu) {
     ConditionCode conditionCode = bits_extract(instr, CPSR_FLAGS_OFFSET, CPSR_FLAGS_OFFSET + NUM_CPSR_FLAGS);
 
-    uint32_t z = 0;
+    uint32_t CPSR = read_from_register(cpu, CPSR_INDEX);
 
     switch (conditionCode) {
 
         case EQ :
-            z = get_Z(instr);
-            return z;
+            return get_Z(CPSR);
 
         case NE :
-            return ~get_Z(instr);
+            return !get_Z(CPSR);
 
         case GE :
-            if (get_N(instr) == get_V(instr)) {
+            if (get_N(CPSR) == get_V(CPSR)) {
                 return 1;
             }
             return 0;
 
         case LT :
-            if (get_N(instr) != get_V(instr)) {
+            if (get_N(CPSR) != get_V(CPSR)) {
                 return 1;
             }
             return 0;
 
         case GT :
-            if ((get_Z(instr) == 0) && (get_N(instr) == get_V(instr))) {
+            if ((get_Z(CPSR) == 0) && (get_N(CPSR) == get_V(CPSR))) {
                 return 1;
             }
             return 0;
 
         case LE :
-            if ((get_Z(instr) == 1) || (get_N(instr) != get_V(instr))) {
+            if ((get_Z(CPSR) == 1) || (get_N(CPSR) != get_V(CPSR))) {
                 return 1;
             }
             return 0;
@@ -162,7 +161,7 @@ Instr_ptr decode(uint32_t instr) {
         return &halt;
     }
 
-    fprintf(stderr, "Instruction format not recognised");
+    printf("Error: Instruction format not recognised\n");
     return NULL;
 }
 
