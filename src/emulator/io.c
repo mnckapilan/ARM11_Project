@@ -31,14 +31,14 @@ uint32_t get_size(FILE *file) {
 
 FILE *load_file(char *path, uint32_t memorySize) {
     if (file_exists(path) != 0) {
-        fprintf(stderr, "Specified file path doesn't exist.\n");
+        printf("Error: Specified file path doesn't exist.\n");
         return NULL;
     }
 
     FILE *file = open_file(path);
 
     if (get_size(file) > memorySize) {
-        fprintf(stderr, "File is too large to store its contents in memory.\n");
+        printf("Error: File is too large to store its contents in memory.\n");
         close_file(file);
         return NULL;
     }

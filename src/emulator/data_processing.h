@@ -64,10 +64,10 @@ Operand2 interpret_reg_operand(uint32_t val, State cpu);
 
 void dp_set_CPSR(uint32_t result, uint32_t cOut, State cpu);
 
-void logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t dest, uint32_t cOut, Opcode opcode);
+void logical_op(uint32_t val1, uint32_t val2, uint32_t setCPSR, State cpu, uint32_t dest, uint32_t cOut, Opcode op);
 
-void add(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult);
+void arithmetic_op(uint32_t val1, uint32_t val2, State cpu, uint32_t dest, uint32_t setCPSR, uint32_t writeResult, Opcode op);
 
-void data_processing(uint32_t instr, State cpu);
+uint32_t data_processing(uint32_t instr, State cpu);
 
 #endif

@@ -24,7 +24,7 @@
 #define HALT_MASK 0x00000000
 #define HALT_FORMAT 0x00000000
 
-typedef void (*Instr_ptr)(uint32_t, State);
+typedef uint32_t (*Instr_ptr)(uint32_t, State);
 
 typedef struct {
     uint8_t fetchedEmpty;
@@ -61,6 +61,12 @@ uint32_t read_from_register(State cpu, uint32_t Rn);
 void increment_PC(State cpu);
 
 uint32_t get_next_instruction(State cpu);
+
+uint32_t get_Z(uint32_t val);
+
+uint32_t get_N(uint32_t val);
+
+uint32_t get_V(uint32_t val);
 
 uint32_t check_condition(uint32_t instr, State cpu);
 

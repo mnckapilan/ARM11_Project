@@ -23,13 +23,13 @@
 #define BYTE_WIDTH 8
 #define NOBITS 32
 
-uint32_t interpretShiftCode(uint8_t shiftTypeCode, uint32_t rMRegValue, uint8_t constantShiftAmount);
+uint32_t interpret_shift_code(uint32_t shiftTypeCode, uint32_t rMRegValue, uint32_t constantShiftAmount);
 
-uint16_t interpret_offset_shifted_reg(State cpu, uint32_t instruction);
+uint32_t interpret_offset_shifted_reg(State cpu, uint32_t instruction);
 
-void transferData(State cpu, uint32_t instruction, uint16_t memAddr);
+uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr);
 
-uint32_t compute_memory_address(uint32_t baseRegValue, uint16_t offset, uint32_t instruction);
+uint32_t compute_memory_address(uint32_t baseRegValue, uint32_t offset, uint32_t instruction);
 
 uint32_t single_data_transfer(uint32_t instruction, State cpu);
 
