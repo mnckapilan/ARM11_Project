@@ -8,7 +8,7 @@
 #include "utilities.h"
 #include "emulator.h"
 
-#define MULT_ACC_INDEX 0x00200000
+#define MULT_ACC_INDEX 21
 #define MULT_SET_INDEX 20
 #define MULT_RD_INDEX 16
 #define MULT_RN_INDEX 12
@@ -17,6 +17,6 @@
 
 void mul_set_CPSR(int32_t val, State cpu);
 
-void multiply(uint32_t instr, State cpu);
+uint32_t multiply(uint32_t instr, State cpu);
 
 #endif

@@ -10,6 +10,6 @@
 #define BRANCH_SIGN_BIT_MASK 0x02000000
 #define BRANCH_SIGN_EXTEND 0xfc000000
 
-void branch(uint32_t instr, State cpu);
+uint32_t branch(uint32_t instr, State cpu);
 
 #endif
