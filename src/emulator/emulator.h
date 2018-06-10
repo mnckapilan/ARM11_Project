@@ -12,6 +12,7 @@
 #include "halt.h"
 #include "single_data_transfer.h"
 #include "data_processing.h"
+#include "utilities.h"
 
 #define DATA_PROCESSING_MASK 0x0c000000
 #define MULTIPLY_MASK 0x0fc000f0
@@ -23,6 +24,13 @@
 #define BRANCH_FORMAT 0x0a000000
 #define HALT_MASK 0x00000000
 #define HALT_FORMAT 0x00000000
+
+#define GPIO_PINS_0_9 0x20200000
+#define GPIO_PINS_10_19 0x20200004
+#define GPIO_PINS_20_29 0x20200008
+#define GPIO_CLEAR_ADDR 0x20200028
+#define GPIO_SET_ADDR 0x2020001c
+
 
 typedef uint32_t (*Instr_ptr)(uint32_t, State);
 

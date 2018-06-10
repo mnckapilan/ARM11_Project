@@ -1,6 +1,7 @@
 #include "single_data_transfer.h"
 
-/* This function decodes the shift type bits in the 32 bit instruction (bits 5 and 6) for the case in which the offset is
+/* 
+ * This function decodes the shift type bits in the 32 bit instruction (bits 5 and 6) for the case in which the offset is
  * interpreted as a shifted register (I bit equals 1). It applies a shift operation to the value held in register Rm, with
  * a specified shift amount (unsigned), and returns the result. The shift operation type is specified by the shift type
  * code (0 - logical left shift, 1 - logical right shift, 2 - arithmetic right shift, 3 - rotate right).
@@ -29,7 +30,8 @@ uint32_t interpret_shift_code(uint32_t shiftTypeCode, uint32_t rMRegValue, uint3
     return result;
 }
 
-/* This function interprets offset as a shifted register instead of an immediate offset (I bit = 1). A shift operation,
+/*
+ * This function interprets offset as a shifted register instead of an immediate offset (I bit = 1). A shift operation,
  * specified by shift type bits, is applied to value of register rM. The shift amount depends on the value of bit 4 in
  * from the offset. If bit 4 equals 0, the shift value is specified by a constant amount - 8 bit unsigned int. If bit 4
  * equals 1, the shift amount is specified by another register, rS. The bottom byte of rS specifies the shift amount.
@@ -54,7 +56,8 @@ uint32_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
     return offset_32bit;
 }
 
-/* Transfers data from memory to a destination register or from a source register to  memory, depending on the value of
+/* 
+ * Transfers data from memory to a destination register or from a source register to  memory, depending on the value of
  * the load bit. If load bit equals 1, word is loaded from memory (fetched using supplied memory address) into the dest
  * register. If load bit equals 0, word read from source register is stored into memory at given address.
  * Index of source/dest register is rdRegIndex.
@@ -81,7 +84,8 @@ uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr) {
     }
 }
 
-/* Computes memory address to based on value of up bit. Uses value stored in base register Rn and previously computed offset
+/* 
+ * Computes memory address to based on value of up bit. Uses value stored in base register Rn and previously computed offset
  * value. Offset is either added or subtracted from base register.
  */
 uint32_t compute_memory_address(uint32_t baseRegValue, uint32_t offset, uint32_t instruction) {
@@ -93,7 +97,8 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint32_t offset, uint32_t
     return (baseRegValue - offset);
 }
 
-/* Main function for executing single data transfer instruction. Computes unsigned offset - if I bit (immediateOffset)
+/* 
+ * Main function for executing single data transfer instruction. Computes unsigned offset - if I bit (immediateOffset)
  * equals 1, offset is interpreted as a shifted register and its value is accordingly computed, otherwise offset
  * interpreted as an immediate value. Value of base register is retrieved using baseRegIndex. If pBit equals 1 (pre-indexing),
  * the offset is added/subtracted to the base register before transferring the data, otherwise (post-indexing), offset is

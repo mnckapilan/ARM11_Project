@@ -7,6 +7,7 @@
 #define NUM_REGISTERS 17
 #define NUM_GEN_PURPOSE_REGISTERS 13
 #define NUM_MEMORY_LOCATIONS 65536
+#define NUM_GPIO_PINS 30
 #define WORD_SIZE 32
 #define BYTE_SIZE 8
 #define BYTES_PER_WORD 4
@@ -27,9 +28,10 @@
 #define BIT_SIZE 1
 #define REG_INDEX_SIZE 4
 
+/* Stores the state of the emulator memory and registers */
 typedef struct {
-    uint8_t *memory;
-    uint32_t *regs;
+    uint8_t *memory;   /* Array of bytes for memory */
+    uint32_t *regs;    /* Array of 4 bytes (1 word) for registers */
 } State;
 
 uint32_t power_of_2(uint32_t val);
