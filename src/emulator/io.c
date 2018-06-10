@@ -5,8 +5,15 @@ FILE *open_file(char *path) {
     return file;
 }
 
+/*
+ * fclose() returns 0 if file is closed successfully,
+ * so keep trying to close until it closes successfully.
+ */
 void close_file(FILE *file) {
-    fclose(file);
+    int32_t result = 0;
+    do {
+    	result = fclose(file);
+    } while (result != 0);
 }
 
 /* 

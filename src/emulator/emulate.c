@@ -8,14 +8,14 @@ int main(int argc, char **argv) {
 
     if (argc != NUM_EXPECTED_ARGS) {
         printf("Emulator takes exactly one file as an argument.\n");
-        return 1;
+        return EXIT_FAILURE;
     }
 
     FILE *instrFile = load_file(argv[1], NUM_MEMORY_LOCATIONS);
 
     /* If file doesn't exist -- exit with non zero status code */
     if (instrFile == NULL) {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     State cpu = initialize_CPU(); /* Start emulator with zero memory and registers */
@@ -28,6 +28,6 @@ int main(int argc, char **argv) {
 
     free_emulator(cpu); /* Free dynamically allocated memory in the emulator */
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 

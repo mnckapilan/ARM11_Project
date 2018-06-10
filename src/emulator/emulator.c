@@ -188,11 +188,12 @@ uint32_t check_condition(uint32_t instr, State cpu) {
 void read_instructions(FILE *file, State cpu) {
 
     uint32_t instr = 0;
-    uint32_t size = get_size(file) / BYTES_PER_WORD; 		/* Obtain the size in bytes of the file */
+    uint32_t size = get_size(file) / BYTES_PER_WORD; 		  /* Obtain the size in bytes of the file */
 
     for (uint32_t i = 0; i < size; i++) {
-        fread(&instr, sizeof(uint32_t), 1, file);   		/* Read the next word from the file */
-        write_to_memory(cpu, i * BYTES_PER_WORD, instr);	/* Write the word to memory */
+        if (fread(&instr, sizeof(uint32_t), 1, file) == 1) {      /* Read the next word from the file */
+        	write_to_memory(cpu, i * BYTES_PER_WORD, instr);  /* Write the word to memory if it was read */
+	}
     }
 }
 
@@ -255,9 +256,9 @@ void run_emulator(State cpu) {
             }
         }
 
-        if (pipelineStage.fetchedEmpty == 0) {                                         /* If there is a fetched instruction in the pipeline */
+        if (pipelineStage.fetchedEmpty == 0) {                                          /* If there is a fetched instruction in the pipeline */
 
-            pipelineStage.decoded = decode(pipelineStage.fetched);		               /* Decode the instruction and store the instruction bits for its future execution*/
+            pipelineStage.decoded = decode(pipelineStage.fetched);		        /* Decode the instruction and store the instruction bits for its future execution*/
             pipelineStage.decodedInstr = pipelineStage.fetched;
 
             if (pipelineStage.decodedEmpty == 1) {
@@ -268,11 +269,11 @@ void run_emulator(State cpu) {
             pipelineStage.fetchedEmpty = 0;
         }
 
-        pipelineStage.fetched = get_next_instruction(cpu);                             /* Get the next instruction for the pipeline */
-        increment_PC(cpu);                                                             /* Increment the Program Counter */
+        pipelineStage.fetched = get_next_instruction(cpu);                              /* Get the next instruction for the pipeline */
+        increment_PC(cpu);                                                              /* Increment the Program Counter */
     }
 
-    halt(0, cpu);								       /* After the pipeline finishes, call the halt function to output the final emulator state */
+    halt(0, cpu);								        /* After the pipeline finishes, call the halt function to output the final emulator state */
 }
 
 /* Frees the memory allocated to the memory and registers */
