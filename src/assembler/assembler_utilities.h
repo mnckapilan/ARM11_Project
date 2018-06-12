@@ -5,7 +5,7 @@
 #ifndef ARM11_09_ASSEMBLER_DEFINITIONS_H
 #define ARM11_09_ASSEMBLER_DEFINITIONS_H
 #include <stdint.h>
-#include "string.h"
+#include <string.h>
 
 typedef struct instructions {
 
