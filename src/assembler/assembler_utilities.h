@@ -38,6 +38,16 @@ typedef enum {
     MOV = 13
 } OPCODE;
 
+typedef enum {
+    eq = 0,
+    ne = 1,
+    ge = 10,
+    lt = 11,
+    gt = 12,
+    le = 13,
+    al = 14,
+} COMP;
+
 //converts an number larger than 8 bits to a number less than or equal to 8 bits with a rotation
 uint32_t convertOP2(uint32_t op2_32bit) {
     uint32_t rot;
@@ -95,5 +105,24 @@ OPCODE getOpcodeDetails(char * phrase) {
     return result;
 }
 
+uint32_t getCond(char *cond) {
+    uint32_t res = al;
+
+    if (strncmp("eq", cond, 2) == 0) {
+        res = eq;
+    } else if (strncmp("ne", cond, 2) == 0) {
+        res = ne;
+    } else if (strncmp("ge", cond, 2) == 0) {
+        res = ge;
+    } else if (strncmp("lt", cond, 2) == 0) {
+        res = lt;
+    } else if (strncmp("gt", cond, 2) == 0) {
+        res = gt;
+    } else if (strncmp("le", cond, 2) == 0) {
+        res = le;
+    }
+
+    return res;
+}
 
 #endif //ARM11_09_ASSEMBLER_DEFINITIONS_H

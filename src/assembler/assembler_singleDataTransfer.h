@@ -10,4 +10,6 @@
 
 #define COND 14u
 
+uint32_t single_data_transfer(instruction *ins);
+
 #endif //ARM11_09_ASSEMBLER_SINGLEDATATRANSFER_H
