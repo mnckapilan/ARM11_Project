@@ -17,5 +17,5 @@ uint32_t single_data_transfer(instruction *ins) {
     }
 
     return p | (1 << b26) | (rd << b12) | (condition << b28) | abs(offset)
-            | (1 << b20) | (rn << b16) | (ins->u ? U : 0) | ((ins->imm == 0) << b25);
+            | (l << b20) | (rn << b16) | (ins->u ? U : 0) | ((ins->imm == 0) << b25);
 }
