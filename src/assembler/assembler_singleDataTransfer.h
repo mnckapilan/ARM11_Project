@@ -8,8 +8,6 @@
 #include "assembler_utilities.h"
 #include <math.h>
 
-#define Cond 14u
-#define P 24u
-#define U (1u << 23u)
+#define COND 14u
 
 #endif //ARM11_09_ASSEMBLER_SINGLEDATATRANSFER_H
