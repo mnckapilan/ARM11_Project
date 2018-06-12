@@ -16,6 +16,8 @@ uint32_t single_data_transfer(instruction *ins) {
         l = 0;
     }
 
-    return p | (1 << b26) | (rd << b12) | (condition << b28) | abs(offset)
-            | (l << b20) | (rn << b16) | (ins->u ? U : 0) | ((ins->imm == 0) << b25);
+    /* Instruction flags and components are shifted into place and or'd to return
+     * uint32_t instruction. */
+    return p | (1 << 26) | (rd << 12) | (condition << 28) | abs(offset)
+            | (l << 20) | (rn << 16) | (ins->u ? U : 0) | ((ins->imm == 0) << 25);
 }
