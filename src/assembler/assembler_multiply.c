@@ -3,9 +3,6 @@
 //
 
 #include "assembler_multiply.h"
-#include "assembler_utilities.h"
-#include "string.h"
-
 
 uint32_t assembler_multiply(instruction *instructs) {
 

@@ -4,6 +4,10 @@
 
 #ifndef ARM11_09_ASSEMBLER_MULTIPLY_H
 #define ARM11_09_ASSEMBLER_MULTIPLY_H
+
+#include "assembler_utilities.h"
+#include <string.h>
+
 #define COND_multiply 0x0000000E
 #define cond_Mask_MUL 28
 #define A_Mask_MUL 21
