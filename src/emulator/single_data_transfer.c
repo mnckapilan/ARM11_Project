@@ -63,12 +63,10 @@ uint32_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
  * register. If load bit equals 0, word read from source register is stored into memory at given address.
  * Index of source/dest register is rdRegIndex.
  */
-uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr) {
-    uint32_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
+uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr, uint32_t loadStoreBit) {
     uint32_t rdRegIndex = bits_extract(instruction, RD_INDEX, RD_INDEX + REG_WIDTH);
     uint32_t memWord;
-
-    if (lBit == 1) {
+    if (loadStoreBit == 1) {
         if (memory_in_bounds(memAddr) == 0) {
             memWord = read_from_memory(cpu, memAddr);
             write_to_register(cpu, rdRegIndex, memWord);
@@ -112,6 +110,7 @@ uint32_t single_data_transfer(uint32_t instruction, State cpu) {
     if (check_condition(instruction, cpu) == 0) {
         return 0;
     }
+    uint32_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
     uint32_t immediateOffset = bits_extract(instruction, I_INDEX, I_INDEX + 1);
     uint32_t pBit = bits_extract(instruction, P_INDEX, P_INDEX + 1);
     uint32_t baseRegIndex = bits_extract(instruction, RN_INDEX, RN_INDEX + REG_WIDTH);
@@ -125,16 +124,10 @@ uint32_t single_data_transfer(uint32_t instruction, State cpu) {
 
     if (pBit == 1) {
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-        transferData(cpu, instruction, address);
-        if (baseRegValue < NUM_MEMORY_LOCATIONS) {
-                uint16_t memAddress = baseRegValue;
-                transferData(cpu, instruction, memAddress);
-                uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-                write_to_register(cpu, baseRegIndex, address);
-            }
+        transferData(cpu, instruction, address, lBit);
         }
      else {
-        transferData(cpu, instruction, baseRegValue);
+        transferData(cpu, instruction, baseRegValue, lBit);
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
         write_to_register(cpu, baseRegIndex, address);
     }

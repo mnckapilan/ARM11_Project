@@ -27,7 +27,7 @@ uint32_t interpret_shift_code(uint32_t shiftTypeCode, uint32_t rMRegValue, uint3
 
 uint32_t interpret_offset_shifted_reg(State cpu, uint32_t instruction);
 
-uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr);
+uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr, uint32_t loadStoreBit);
 
 uint32_t compute_memory_address(uint32_t baseRegValue, uint32_t offset, uint32_t instruction);
 
