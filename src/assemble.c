@@ -173,6 +173,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 res[current_address] = assembler_special(ins);
             }
             break;
+        default:break;
     }
 
 
