@@ -1,6 +1,6 @@
 #ifndef SINGLEDATATRANSFER_H
 #define SINGLEDATATRANSFER_H
-#include "data_transfer.h"
+#include "emulator_data_transfer.h"
 
 #define OFFSET_WIDTH 12
 #define RS_INDEX 8

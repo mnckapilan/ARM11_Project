@@ -1,4 +1,4 @@
-#include "registers.h"
+#include "emulator_registers.h"
 
 void write_register(uint32_t *reg, uint32_t val) {
     (*reg) = val;

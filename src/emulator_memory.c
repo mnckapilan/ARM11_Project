@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "emulator_memory.h"
 
 /*
  * PRE: address passed will ensure all memory accesses are within bounds

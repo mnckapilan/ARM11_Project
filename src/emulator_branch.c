@@ -1,4 +1,4 @@
-#include "branch.h"
+#include "emulator_branch.h"
 
 /*
  * The instruction is executed if the CPSR condition code is satisfied by

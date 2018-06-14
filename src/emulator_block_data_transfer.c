@@ -1,62 +1,58 @@
-//
-// Created by Sukant Roy on 13/06/2018.
-//
+#include "emulator_block_data_transfer.h"
 
-#include "block_data_transfer.h"
-
-uint32_t preIncrementAddressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
+uint32_t pre_increment_addressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
     uint32_t addr = baseRegValue;
     uint32_t regTransferBit;
     for (uint32_t i = 0; i < REG_LIST_LENGTH; i++) {
         regTransferBit = bits_extract(regList, i, i + 1);
         if (regTransferBit == 1) {
             addr += BYTES_PER_WORD;
-            transferData(cpu, addr, lBit, i);
+            transfer_data(cpu, addr, lBit, i);
         }
     }
     return addr;
 }
 
-uint32_t postIncrementAddressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
+uint32_t post_increment_addressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
     uint32_t addr = baseRegValue;
     uint32_t regTransferBit;
     for (uint32_t i = 0; i < REG_LIST_LENGTH; i++) {
         regTransferBit = bits_extract(regList, i, i + 1);
         if (regTransferBit == 1) {
-            transferData(cpu, addr, lBit, i);
+            transfer_data(cpu, addr, lBit, i);
             addr += BYTES_PER_WORD;
         }
      }
       return addr;
 }
 
-uint32_t preDecrementAddressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
+uint32_t pre_decrement_addressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
     uint32_t addr = baseRegValue;
     uint32_t regTransferBit;
     for (uint32_t i = REG_LIST_LENGTH - 1; i >= 0; i--) {
         regTransferBit = bits_extract(regList, i, i + 1);
         if (regTransferBit == 1) {
             addr -= BYTES_PER_WORD;
-            transferData(cpu, addr, lBit, i);
+            transfer_data(cpu, addr, lBit, i);
         }
     }
     return addr;
 }
 
-uint32_t postDecrementAddressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
+uint32_t post_decrement_addressing(State cpu, uint32_t lBit, uint32_t baseRegValue, uint32_t regList) {
     uint32_t addr = baseRegValue;
     uint32_t regTransferBit;
     for (uint32_t i = REG_LIST_LENGTH - 1; i >= 0; i--) {
         regTransferBit = bits_extract(regList, i, i + 1);
         if (regTransferBit == 1) {
-            transferData(cpu, addr, lBit, i);
+            transfer_data(cpu, addr, lBit, i);
             addr -= BYTES_PER_WORD;
         }
     }
     return addr;
 }
 
-uint32_t execute_block_data_transfer(uint32_t instruction, State cpu) {
+uint32_t block_data_transfer(uint32_t instruction, State cpu) {
     if (check_condition(instruction, cpu) == 0) {
         return 0;
     }
@@ -72,15 +68,15 @@ uint32_t execute_block_data_transfer(uint32_t instruction, State cpu) {
     uint32_t address;
 
     if ((pBit == 1) && (upBit == 1)) {
-       address = preIncrementAddressing(cpu, lBit, baseRegValue, regList);
+       address = pre_increment_addressing(cpu, lBit, baseRegValue, regList);
     } else if ((pBit == 0) && (upBit == 1)){
-      address = postIncrementAddressing(cpu, lBit, baseRegValue, regList);
+      address = post_increment_addressing(cpu, lBit, baseRegValue, regList);
     }
     else if ((pBit == 1) && (upBit == 0)){
-        address = preDecrementAddressing(cpu, lBit, baseRegValue, regList);
+        address = pre_decrement_addressing(cpu, lBit, baseRegValue, regList);
     }
     else if ((pBit == 0) && (upBit == 0)) {
-        address = postDecrementAddressing(cpu, lBit, baseRegValue, regList);
+        address = post_decrement_addressing(cpu, lBit, baseRegValue, regList);
     }
     if (wBit == 1) {
         write_to_register(cpu, baseRegIndex, address);

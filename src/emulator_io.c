@@ -1,4 +1,4 @@
-#include "io.h"
+#include "emulator_io.h"
 
 FILE *open_file(char *path) {
     FILE *file = fopen(path, "rb");

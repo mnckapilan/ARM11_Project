@@ -1,8 +1,4 @@
-//
-// Created by Sukant Roy on 13/06/2018.
-//
-
-#include "data_transfer.h"
+#include "emulator_data_transfer.h"
 
 /*
  * Transfers data from memory to a destination register or from a source register to  memory, depending on the value of
@@ -10,7 +6,7 @@
  * register. If load bit equals 0, word read from source register is stored into memory at given address.
  * Index of source/dest register is rdRegIndex.
  */
-uint32_t transferData(State cpu, uint32_t memAddr, uint32_t loadStoreBit, uint32_t rdRegIndex) {
+uint32_t transfer_data(State cpu, uint32_t memAddr, uint32_t loadStoreBit, uint32_t rdRegIndex) {
     uint32_t memWord;
     if (loadStoreBit == 1) {
         if (memory_in_bounds(memAddr) == 0) {

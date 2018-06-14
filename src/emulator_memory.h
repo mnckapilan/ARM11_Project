@@ -2,7 +2,7 @@
 #define EMULATOR_MEMORY_H
 
 #include <stdint.h>
-#include "utilities.h"
+#include "emulator_utilities.h"
 
 void clear_word(uint8_t *memLoc);
 

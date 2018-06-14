@@ -1,4 +1,4 @@
-#include "single_data_transfer.h"
+#include "emulator_single_data_transfer.h"
 
 /* 
  * This function decodes the shift type bits in the 32 bit instruction (bits 5 and 6) for the case in which the offset is
@@ -99,10 +99,10 @@ uint32_t single_data_transfer(uint32_t instruction, State cpu) {
 
     if (pBit == 1) {
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-        transferData(cpu, address, lBit, rdRegIndex);
+        transfer_data(cpu, address, lBit, rdRegIndex);
         }
      else {
-        transferData(cpu, baseRegValue, lBit, rdRegIndex);
+        transfer_data(cpu, baseRegValue, lBit, rdRegIndex);
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
         write_to_register(cpu, baseRegIndex, address);
     }
