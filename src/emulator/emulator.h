@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "io.h"
 #include "registers.h"
 #include "memory.h"
