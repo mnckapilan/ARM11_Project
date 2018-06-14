@@ -7,6 +7,16 @@
 #include <stdint.h>
 #include <string.h>
 
+typedef struct symbol {
+    uint32_t address;
+    char *label;
+    struct symbol *next;
+} sym;
+
+typedef struct symbol_table {
+    sym *last;
+} ST;
+
 typedef struct instructions {
 
     char *phrase;
