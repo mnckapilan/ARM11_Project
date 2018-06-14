@@ -241,4 +241,21 @@ void address_handler(instruction *ins, char *token) {
 
 }
 
+
+uint32_t get_Address(ST *symbolTable, char *label) {
+
+    sym *sym = symbolTable -> last;
+
+    while (sym != NULL) {
+        if (strcmp(sym -> label, label) == 0) {
+            return sym -> address;
+        }
+        sym = sym -> next;
+    }
+
+    perror("label not found.");
+    exit(EXIT_FAILURE);
+
+}
+
 #endif //ARM11_09_ASSEMBLER_DEFINITIONS_H
