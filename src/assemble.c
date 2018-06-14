@@ -2,7 +2,11 @@
 #include "emulator/io.h"
 #include "emulator/utilities.h"
 #include "assembler_utilities.h"
-
+#include "assembler_branch.h"
+#include "assembler_dataProcessing.h"
+#include "assembler_multiply.h"
+#include "assembler_special.h"
+#include "assembler_singleDataTransfer.h"
 #define NO_EXPECTED_ARGS 3
 
 void run_assembler(FILE *source, FILE *bin_output);
@@ -28,6 +32,149 @@ int main(int argc, char **argv) {
 
 void set_instruction(instruction *ins, char line[511], uint32_t *res,
                      uint32_t current_address, ST *symbol_table) {
+
+    char *token;
+    char *save;
+
+    token = strtok_r(line, " ,#\n", &save);
+
+    ins->phrase = strdup(token);
+
+    switch (token[0]) {
+        case 'b': token = strtok_r(NULL, " ,#\n", &save);
+            ins->expression = get_Address(symbol_table, token);
+            res[current_address] = branch(ins, current_address * 4);
+            break;
+        case 'c':
+        case 't': token = strtok_r(NULL, " ,#\n", &save);
+            ins->rn = register_handler(token);;
+            token = strtok_r(NULL, " ,#\n", &save);
+            operand_handler(token, ins);
+            token = strtok_r(NULL, " ,#\n", &save);
+            if (token != NULL) {
+                ins->rm = ins->operand2;
+                ins->rs = shiftType(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                operand_handler(token, ins);
+                if (ins->imm == 0) {
+                    printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
+                    ins->operand2 = (ins->operand2 << 8) | (ins->rs << 5) | (1 << 4) | (ins->rm);
+                } else {
+                    ins->operand2 = (ins->operand2 << 7) | (ins->rs << 5) | (ins->rm);
+                }
+                ins->imm = 0;
+            }
+            res[current_address] = assembler_dataProcessing(ins);
+            break;
+        case 'm': if (token[1] == 'u' || token[1] == 'l') {
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rd = register_handler(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rm = register_handler(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rs = register_handler(token);
+                ins->imm = 0;
+                if ((ins->phrase)[1] == 'l') {
+                    token = strtok_r(NULL, " ,#\n", &save);
+                    ins->rn = register_handler(token);
+                }
+                res[current_address] = assembler_multiply(ins);
+            } else if (token[1] == 'o') {
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rd = register_handler(token);;
+                token = strtok_r(NULL, " ,#\n", &save);
+                operand_handler(token, ins);
+                token = strtok_r(NULL, " ,#\n", &save);
+                if (token != NULL) {
+                    ins->rm = ins->operand2;
+                    ins->rs = shiftType(token);
+                    token = strtok_r(NULL, " ,#\n", &save);
+                    operand_handler(token, ins);
+                    if (ins->imm == 0) {
+                        printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
+                        ins->operand2 = (ins->operand2 << 8) | (ins->rs << 5) | (1 << 4) | (ins->rm);
+                    } else {
+                        ins->operand2 = (ins->operand2 << 7) | (ins->rs << 5) | (ins->rm);
+                    }
+                    ins->imm = 0;
+                }
+                res[current_address] = assembler_dataProcessing(ins);
+            }
+            break;
+        case 'o':
+        case 'e':
+        case 'a': if (token[4] == 'q') {
+                res[current_address] = assembler_special(ins);
+                break;
+            }
+        case 'r':
+        case 's': if (token[1] != 't') {
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rd = register_handler(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rn = register_handler(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                operand_handler(token, ins);
+                token = strtok_r(NULL, " ,#\n", &save);
+                if (token != NULL) {
+                    ins->rm = ins->operand2;
+                    ins->rs = shiftType(token);
+                    token = strtok_r(NULL, " ,#\n", &save);
+                    operand_handler(token, ins);
+                    if (ins->imm == 0) {
+                        printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
+                        ins->operand2 = (ins->operand2 << 8) | (ins->rs << 5) | (1 << 4) | (ins->rm);
+                    } else {
+                        ins->operand2 = (ins->operand2 << 7) | (ins->rs << 5) | (ins->rm);
+                    }
+                    ins->imm = 0;
+                }
+                res[current_address] = assembler_dataProcessing(ins);
+                break;
+            }
+        case 'l': if (token[1] != 's') {
+                ins->rn = 0;
+                ins->u = 1;
+                ins->operand2 = 0;
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rd = register_handler(token);
+                token = strtok_r(NULL, "\n", &save);
+                int i, shift = 1;
+                if (token[0] == ' ')  {
+                    shift = 2;
+                }
+                for (i = 0; i < strlen(token); i++) {
+                    token[i] = token[i + shift];
+                }
+                if (token[0] != 'r') {
+                    operand_handler(token, ins);
+                    if ((ins->operand2) > 0xff) {
+                        ins->rn = 15;
+                        ins->lastAdd = ins->lastAdd + 1;
+                        ins->p = 1;
+                        res[ins->lastAdd - 1] = ins->operand2;
+                        ins->operand2 = (ins->lastAdd - 1) * 4 - current_address * 4
+                                          - 8;
+                    } else {
+                        ins->phrase = strdup("mov");
+                        res[current_address] = assembler_dataProcessing(ins);
+                        break;
+                    }
+                } else {
+                    address_handler(ins, token);
+                }
+                res[current_address] = single_data_transfer(ins);
+
+            } else {
+                token = strtok_r(NULL, " ,#\n", &save);
+                ins->rd = register_handler(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                operand_handler(token, ins);
+                res[current_address] = assembler_special(ins);
+            }
+            break;
+    }
+
 
 }
 
