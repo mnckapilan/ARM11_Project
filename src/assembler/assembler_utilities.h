@@ -58,6 +58,26 @@ typedef enum {
     al = 14,
 } COMP;
 
+// Prints binary encoded instruction to specified file
+void print_bin(FILE *f, uint32_t *bin, uint32_t last_address) {
+    fwrite(bin, 4, last_address, f);
+    if (ferror(f)) {
+        perror("There was an error writing binary instruction to file.");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Initialises a 2D array with specified parameters
+char **init_2d_array(int rows, int cols) {
+    char **res = malloc(sizeof(char*) * rows);
+
+    for (int i = 0; i < rows; ++i) {
+        res[i] = malloc(sizeof(char) * cols);
+    }
+
+    return res;
+}
+
 //converts an number larger than 8 bits to a number less than or equal to 8 bits with a rotation
 uint32_t convertOP2(uint32_t op2_32bit) {
     uint32_t rot;

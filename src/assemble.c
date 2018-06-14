@@ -5,6 +5,8 @@
 
 #define NO_EXPECTED_ARGS 3
 
+void run_assembler(FILE *source, FILE *bin_output);
+
 int main(int argc, char **argv) {
     if (argc != NO_EXPECTED_ARGS) {
         fprintf(stderr, "Assembler takes exactly two files as arguments.\n");
@@ -46,22 +48,4 @@ void run_assembler(FILE *source, FILE *bin_output) {
     label = malloc(511 * sizeof(char));
 
     char **array = init_2d_array(1, 511);
-}
-
-void print_bin(FILE *f, uint32_t *bin, uint32_t last_address) {
-    fwrite(bin, 4, last_address, f);
-    if (ferror(f)) {
-        perror("There was an error writing binary instruction to file.");
-        exit(EXIT_FAILURE);
-    }
-}
-
-char **init_2d_array(int rows, int cols) {
-    char **res = malloc(sizeof(char*) * rows);
-
-    for (int i = 0; i < rows; ++i) {
-        res[i] = malloc(sizeof(char) * cols);
-    }
-
-    return res;
 }
