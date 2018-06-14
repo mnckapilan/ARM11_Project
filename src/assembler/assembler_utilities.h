@@ -155,4 +155,90 @@ uint32_t getCond(char *cond) {
     return res;
 }
 
+
+uint32_t shiftType(char *type) {
+
+    uint32_t shift = 3;
+
+    if (strcmp(type, "lsl") == 0) {
+        shift = 0;
+    } else if (strcmp(type, "lsr") == 0) {
+        shift = 1;
+    } else if (strcmp(type, "asr") == 0) {
+        shift = 2;
+    }
+
+    return shift;
+
+}
+
+void operand_handler(char* operand2, instruction *ins) {
+
+    char *eptr;
+    char *save;
+
+    if (operand2[0] == 'r') {
+        ins -> operand2 = atoi(strtok_r(operand2, "-r", &save));
+        ins -> imm = 0;
+    } else if (strstr(operand2, "x") != NULL) {
+        ins -> operand2 = strtol(operand2, &eptr, 16);
+        ins -> imm = 1;
+    } else {
+        ins -> operand2 = strtol(operand2, &eptr, 10);
+        ins -> imm = 1;
+    }
+    if (abs(ins -> operand2) != ins -> operand2) {
+        ins -> u = 0;
+    }
+
+
+}
+
+uint32_t register_handler(char *token) {
+
+    uint32_t res;
+
+    res = token[1] - '0';
+
+    if (token[2] != '\0') {
+        res = res * 10 + (token[2] - '0');
+    }
+
+    return res;
+
+}
+
+void address_handler(instruction *ins, char *token) {
+
+    char *str[4], *save;
+    str[0] = strtok_r(token, "]", &save);
+    str[1] = strtok_r(NULL, "], #", &save);
+    str[2] = strtok_r(NULL, "], #", &save);
+    str[3] = strtok_r(NULL, "], #", &save);
+    if (str[1] == NULL) {
+        ins -> p = 1;
+        str[0] = strtok_r(str[0], ", #", &save);
+        str[1] = strtok_r(NULL, ", #", &save);
+        str[2] = strtok_r(NULL, "], #", &save);
+        str[3] = strtok_r(NULL, "], #", &save);
+    } else {
+        ins -> p = 0;
+    }
+    ins -> imm = 1;
+    ins -> rn = register_handler(str[0]);
+    if (str[1] != NULL) {
+        operand_handler(str[1], ins);
+        if (str[2] != NULL) {
+            ins -> rm = ins -> operand2;
+            if (str[1][0] == '-') {
+                ins -> u = 0;
+            }
+            operand_handler(str[3], ins);
+            ins -> imm = 0;
+            ins -> operand2 = (ins -> operand2 << 7) | (shiftType(str[2]) << 5) | (ins -> rm);
+        }
+    }
+
+}
+
 #endif //ARM11_09_ASSEMBLER_DEFINITIONS_H
