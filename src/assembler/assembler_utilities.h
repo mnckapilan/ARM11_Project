@@ -67,6 +67,40 @@ void print_bin(FILE *f, uint32_t *bin, uint32_t last_address) {
     }
 }
 
+void add_symbol(uint32_t address, char *label, ST *symbol_table) {
+    sym *symbol = malloc(sizeof(sym));
+    symbol->label = label;
+    symbol->address = address;
+    symbol->next = symbol_table->last;
+    symbol_table->last = symbol;
+}
+
+char *read_file(FILE *f, int *num_lines) {
+    int num = 0;
+    int num_space = 1;
+
+    while (!feof(f)) {
+        if (getc(f) == '\n' && num_space == 0) {
+            num++;
+            num_space = 1;
+        } else {
+            num_space = 0;
+        }
+    }
+    rewind(f);
+
+    *num_lines = num;
+    char *data = malloc(num * 511 * sizeof(char));
+
+    fread(data, (size_t ) num * 511, 1, f);
+    if (ferror(f)) {
+        perror("There was an error reading from then file.");
+        exit(EXIT_FAILURE);
+    }
+
+    return data;
+}
+
 // Initialises a 2D array with specified parameters
 char **init_2d_array(int rows, int cols) {
     char **res = malloc(sizeof(char*) * rows);
@@ -109,7 +143,7 @@ uint32_t convertOP2(uint32_t op2_32bit) {
 }
 
 OPCODE getOpcodeDetails(char * phrase) {
-    OPCODE result;
+    OPCODE result = AND;
     if(!strcmp(phrase,"and")) {
         result = AND;
     } else if(!strcmp(phrase,"eor")) {
@@ -178,13 +212,13 @@ void operand_handler(char* operand2, instruction *ins) {
     char *save;
 
     if (operand2[0] == 'r') {
-        ins -> operand2 = atoi(strtok_r(operand2, "-r", &save));
+        ins->operand2 = atoi(strtok_r(operand2, "-r", &save));
         ins -> imm = 0;
     } else if (strstr(operand2, "x") != NULL) {
-        ins -> operand2 = strtol(operand2, &eptr, 16);
+        ins->operand2 = strtol(operand2, &eptr, 16);
         ins -> imm = 1;
     } else {
-        ins -> operand2 = strtol(operand2, &eptr, 10);
+        ins->operand2 = strtol(operand2, &eptr, 10);
         ins -> imm = 1;
     }
     if (abs(ins -> operand2) != ins -> operand2) {

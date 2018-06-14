@@ -182,11 +182,11 @@ void run_assembler(FILE *source, FILE *bin_output) {
     instruction *ins = malloc(sizeof(instruction));
     ST *symbol_table = malloc(sizeof(ST));
 
-    int i = 0, *num = &i, no_lines;
+    int a = 0, *num = &a, num_lines;
     uint32_t current_address = 0;
     char *data, *save, *label;
 
-    data = ""; //TODO
+    data = read_file(source, num);
 
     if (data != NULL) {
         free(data);
@@ -194,5 +194,34 @@ void run_assembler(FILE *source, FILE *bin_output) {
 
     label = malloc(511 * sizeof(char));
 
-    char **array = init_2d_array(1, 511);
+    char **array = init_2d_array(*num, 511);
+    num_lines = *num;
+    array[0] = strtok_r(data, "\n", &save);
+
+    for (int i = 1; i < num_lines; ++i) {
+        array[i] = strtok_r(NULL, "\n", &save);
+    }
+
+    for (int i = 0; i < num_lines; ++i) {
+        if (strstr(array[i], ":") != NULL) {
+            label = strdup(array[i]);
+            label[strlen(label) - 1] = '\0';
+            add_symbol(current_address * 4, label, symbol_table);
+        } else {
+            current_address++;
+        }
+    }
+
+    ins->lastAdd = current_address;
+    uint32_t *res = malloc(current_address * 2 * sizeof(uint32_t));
+    current_address = 0;
+
+    for (int i = 0; i < num_lines; ++i) {
+        if (strstr(array[i], ":") == NULL) {
+            set_instruction(ins, array[i], res, current_address, symbol_table);
+            current_address++;
+        }
+    }
+
+    print_bin(bin_output, res, ins->lastAdd);
 }
