@@ -12,5 +12,6 @@
 #define Rn_Mask_DP 16
 #define Rd_Mask_DP 12
 
+uint32_t assembler_dataProcessing(instruction *ins);
 
 #endif //ARM11_09_ASSEMBLER_DATAPROCESSING_H
