@@ -120,10 +120,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 if (token[0] == ' ')  {
                     shift = 2;
                 }
-                ins->imm = 0;
-                if (contains(token, '=')) {
-                    ins->imm = 1;
-                }
+
                 for (i = 0; i < strlen(token); i++) {
                     token[i] = token[i + shift];
                 }
@@ -139,7 +136,6 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                     } else {
                         ins->phrase = "mov";
                         res[current_address] = assembler_dataProcessing(ins);
-                        break;
                     }
                 } else {
                     address_handler(ins, token);
