@@ -21,11 +21,11 @@ emulator_memory.o:	emulator_memory.h emulator_utilities.h
 emulator_halt.o:	emulator_halt.h emulator_utilities.h
 emulator_utilities.o:	emulator_utilities.h
 
-assemble:               assemble.o assembler_branch.o assembler_dataProcessing.o assembler_multiply.o assembler_singleDataTransfer.o assembler_special.o assembler_utilities.o
-assemble.o:             assembler_branch.h assembler_dataProcessing.h assembler_multiply.h assembler_singleDataTransfer.h assembler_special.h assembler_utilities.h
+assemble:               assemble.o assembler_branch.o assembler_data_processing.o assembler_multiply.o assembler_single_data_transfer.o assembler_special.o assembler_utilities.o
+assemble.o:             assembler_branch.h assembler_data_processing.h assembler_multiply.h assembler_single_data_transfer.h assembler_special.h assembler_utilities.h
 assembler_branch.o:     assembler_branch.h assembler_utilities.h
-assembler_dataProcessing.o : assembler_dataProcessing.h assembler_utilities.h
+assembler_data_processing.o : assembler_dataProcessing.h assembler_utilities.h
 assembler_multiply.o:   assembler_multiply.h assembler_utilities.h
-assembler_singleDataTransfer.o: assembler_singleDataTransfer.h assembler_utilities.h
-assembler_special.o:    assembler_special.h assembler_utilities.h assembler_dataProcessing.h
+assembler_single_data_transfer.o: assembler_single_data_transfer.h assembler_utilities.h
+assembler_special.o:    assembler_special.h assembler_utilities.h assembler_data_processing.h
 assembler_utilities.o:  assembler_utilities.h
