@@ -179,7 +179,7 @@ void run_assembler(int argc, char **argv) {
     }
 
     for (int i = 0; i < num_lines; ++i) {
-        if (strstr(array[i], ":") != NULL) {
+        if (contains(array[i], ':')) {
             label = strcpy(malloc(strlen(array[i]) + 1),array[i]);
             label[strlen(label) - 1] = '\0';
             add_symbol(current_address * 4, label, symbol_table);
