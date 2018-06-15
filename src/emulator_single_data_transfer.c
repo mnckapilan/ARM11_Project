@@ -24,8 +24,7 @@ uint32_t interpret_shift_code(uint32_t shiftTypeCode, uint32_t rMRegValue, uint3
     } else if (shiftTypeCode == 3) {
 
         int32_t signedRmRegValue = rMRegValue;
-        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount)); // change this implementation
-                // and work with unsigned values/ints (uint32_t)
+        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount));
     }
 
     return result;

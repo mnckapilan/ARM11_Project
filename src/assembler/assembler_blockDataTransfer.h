@@ -4,6 +4,8 @@
 
 #ifndef ARM11_09_ASSEMBLER_BLOCKDATATRANSFER_H
 #define ARM11_09_ASSEMBLER_BLOCKDATATRANSFER_H
-#include "utilities.h"
+#include "assembler_utilities.h"
+
+#define COND 14u
 
 #endif
