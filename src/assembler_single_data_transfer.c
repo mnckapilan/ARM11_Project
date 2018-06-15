@@ -8,7 +8,7 @@ uint32_t single_data_transfer(instruction *ins) {
     /* Instruction flags and components are shifted into place and or'd to return
      * uint32_t instruction. */
     uint32_t condition = COND << 28u;
-    uint32_t offset = (uint32_t) abs(ins->operand2) - 2;
+    uint32_t offset = (uint32_t) abs(ins->operand2);
     uint32_t rd = (ins->rd) << 12u;
     uint32_t rn = (ins->rn) << 16u;
     uint32_t imm = (ins->imm) << 25u;
