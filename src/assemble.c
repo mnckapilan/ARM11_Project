@@ -164,10 +164,6 @@ void run_assembler(int argc, char **argv) {
 
     data = read_file(argc, argv, num);
 
-    if (data != NULL) {
-        free(data);
-    }
-
     label = malloc(511 * sizeof(char));
 
     char **array = init_2d_array(*num, 511);
@@ -197,6 +193,10 @@ void run_assembler(int argc, char **argv) {
             set_instruction(ins, array[i], res, current_address, symbol_table);
             current_address++;
         }
+    }
+
+    if (data != NULL) {
+        free(data);
     }
 
     print_bin(argv[2], res, ins->lastAdd);
