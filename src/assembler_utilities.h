@@ -85,4 +85,6 @@ void address_handler(instruction *ins, char *token);
 
 uint32_t get_Address(ST *symbolTable, char *label);
 
+int contains(char *string, char find);
+
 #endif //ARM11_09_ASSEMBLER_DEFINITIONS_H

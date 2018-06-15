@@ -252,3 +252,12 @@ uint32_t get_Address(ST *symbolTable, char *label) {
     exit(EXIT_FAILURE);
 
 }
+
+int contains(char *string, char find) {
+    for (int i = 0; i < strlen(string); ++i) {
+        if (string[i] == find) {
+            return 1;
+        }
+    }
+    return 0;
+}
