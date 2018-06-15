@@ -12,6 +12,8 @@ void print_bin(char *filename, uint32_t *bin, uint32_t last_address) {
         perror("There was an error writing binary instruction to file.");
         exit(EXIT_FAILURE);
     }
+
+    fclose(f);
 }
 
 void add_symbol(uint32_t address, char *label, ST *symbol_table) {
