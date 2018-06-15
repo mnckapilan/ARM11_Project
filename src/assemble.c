@@ -120,6 +120,10 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 if (token[0] == ' ')  {
                     shift = 2;
                 }
+                ins->imm = 0;
+                if (contains(token, '=')) {
+                    ins->imm = 1;
+                }
                 for (i = 0; i < strlen(token); i++) {
                     token[i] = token[i + shift];
                 }
@@ -140,10 +144,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 } else {
                     address_handler(ins, token);
                 }
-                ins->imm = 0;
-                if (contains(save, '=')) {
-                    ins->imm = 1;
-                }
+
                 res[current_address] = single_data_transfer(ins);
 
             } else {
