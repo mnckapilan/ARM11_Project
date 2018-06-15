@@ -1,4 +1,4 @@
-#include "multiply.h"
+#include "emulator_multiply.h"
 
 /*
  * This function first obtains the CPSR bits for C and V and retains their values.

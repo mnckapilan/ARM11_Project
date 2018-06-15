@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "emulator.h"
-#include "utilities.h"
+#include "emulator_utilities.h"
 
 #define I_OFFSET 25
 #define OPCODE_OFFSET 21

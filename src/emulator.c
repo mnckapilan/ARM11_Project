@@ -1,5 +1,5 @@
 #include "emulator.h"
-#include "utilities.h"
+#include "emulator_utilities.h"
 
 /*
  * This allocates the memory and registers in the heap dynamically. The calloc() function initialises the allocated

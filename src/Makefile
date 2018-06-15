@@ -1,17 +1,31 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
+CFLAGS  = -Wall -std=c99 -Werror -pedantic
+BUILD   = emulate assemble
 
-.SUFFIXES: .c .o
+all:    $(BUILD)
+clean:	
+	/bin/rm -f $(BUILD) *.o core
 
-.PHONY: all clean
+emulate:		emulate.o emulator.o emulator_io.o emulator_registers.o emulator_memory.o emulator_multiply.o emulator_branch.o emulator_data_transfer.o emulator_block_data_transfer.o emulator_single_data_transfer.o emulator_data_processing.o emulator_utilities.o emulator_halt.o
+emulate.o:		emulator.h
+emulator.o:		emulator.h emulator_io.h emulator_registers.h emulator_memory.h emulator_multiply.h emulator_branch.h emulator_block_data_transfer.h emulator_single_data_transfer.h emulator_data_processing.h emulator_utilities.h emulator_halt.h
+emulator_io.o:		emulator_io.h emulator_utilities.h
+emulator_registers.o: 	emulator_registers.h emulator_utilities.h
+emulator_data_processing.o: emulator_data_processing.h emulator_utilities.h
+emulator_data_transfer.o:   emulator_data_transfer.h emulator_utilities.h
+emulator_block_data_transfer.o:  emulator_block_data_transfer.h emulator_data_transfer.h
+emulator_single_data_transfer.o: emulator_single_data_transfer.h emulator_data_transfer.h
+emulator_branch.o:	emulator_branch.h emulator_utilities.h
+emulator_multiply.o:	emulator_multiply.h emulator_utilities.h
+emulator_memory.o:	emulator_memory.h emulator_utilities.h
+emulator_halt.o:	emulator_halt.h emulator_utilities.h
+emulator_utilities.o:	emulator_utilities.h
 
-all: assemble emulate
-
-assemble: assemble.o
-
-emulate: emulate.o
-
-clean:
-	rm -f $(wildcard *.o)
-	rm -f assemble
-	rm -f emulate
+assemble:               assemble.o assembler_branch.o assembler_dataProcessing.o assembler_multiply.o assembler_singleDataTransfer.o assembler_special.o assembler_utilities.o
+assemble.o:             assembler_branch.h assembler_dataProcessing.h assembler_multiply.h assembler_singleDataTransfer.h assembler_special.h assembler_utilities.h
+assembler_branch.o:     assembler_branch.h assembler_utilities.h
+assembler_dataProcessing.o : assembler_dataProcessing.h assembler_utilities.h
+assembler_multiply.o:   assembler_multiply.h assembler_utilities.h
+assembler_singleDataTransfer.o: assembler_singleDataTransfer.h assembler_utilities.h
+assembler_special.o:    assembler_special.h assembler_utilities.h assembler_dataProcessing.h
+assembler_utilities.o:  assembler_utilities.h

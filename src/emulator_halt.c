@@ -1,4 +1,4 @@
-#include "halt.h"
+#include "emulator_halt.h"
 
 /*
  * Takes a value and a maximum number of spaces to be printed.

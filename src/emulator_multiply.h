@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
-#include "utilities.h"
+#include "emulator_utilities.h"
 #include "emulator.h"
 
 #define MULT_ACC_INDEX 21

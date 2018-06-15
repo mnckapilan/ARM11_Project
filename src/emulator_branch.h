@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "emulator.h"
-#include "utilities.h"
+#include "emulator_utilities.h"
 
 #define BRANCH_OFFSET_START 0
 #define BRANCH_OFFSET_SIZE 24
