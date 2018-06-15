@@ -2,7 +2,7 @@
 // Created by Jordan Bunke on 2018-06-08.
 //
 
-#include "assembler_singleDataTransfer.h"
+#include "assembler_single_data_transfer.h"
 
 uint32_t single_data_transfer(instruction *ins) {
     /* Instruction flags and components are shifted into place and or'd to return

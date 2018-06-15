@@ -3,10 +3,10 @@
 #include "emulator/utilities.h"
 #include "assembler_utilities.h"
 #include "assembler_branch.h"
-#include "assembler_dataProcessing.h"
+#include "assembler_data_processing.h"
 #include "assembler_multiply.h"
 #include "assembler_special.h"
-#include "assembler_singleDataTransfer.h"
+#include "assembler_single_data_transfer.h"
 #define NO_EXPECTED_ARGS 3
 
 void run_assembler(FILE *source, FILE *bin_output);
