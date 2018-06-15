@@ -1,7 +1,12 @@
 #include "assembler_utilities.h"
 
 // Prints binary encoded instruction to specified file
-void print_bin(FILE *f, uint32_t *bin, uint32_t last_address) {
+void print_bin(char *filename, uint32_t *bin, uint32_t last_address) {
+    FILE *f;
+    f = fopen(filename, "w");
+
+    assert(f != NULL);
+
     fwrite(bin, 4, last_address, f);
     if (ferror(f)) {
         perror("There was an error writing binary instruction to file.");

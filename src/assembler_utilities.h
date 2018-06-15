@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 typedef struct symbol {
     uint32_t address;
@@ -60,7 +61,7 @@ typedef enum {
     al = 14,
 } COMP;
 
-void print_bin(FILE *f, uint32_t *bin, uint32_t last_address);
+void print_bin(char *filename, uint32_t *bin, uint32_t last_address);
 
 void add_symbol(uint32_t address, char *label, ST *symbol_table);
 
