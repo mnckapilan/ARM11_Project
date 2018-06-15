@@ -1,34 +1,10 @@
-#include <stdlib.h>
-#include "emulator/io.h"
-#include "emulator/utilities.h"
 #include "assembler_utilities.h"
 #include "assembler_branch.h"
-#include "assembler_dataProcessing.h"
+#include "assembler_data_processing.h"
 #include "assembler_multiply.h"
 #include "assembler_special.h"
-#include "assembler_singleDataTransfer.h"
+#include "assembler_single_data_transfer.h"
 #define NO_EXPECTED_ARGS 3
-
-void run_assembler(FILE *source, FILE *bin_output);
-
-int main(int argc, char **argv) {
-    if (argc != NO_EXPECTED_ARGS) {
-        fprintf(stderr, "Assembler takes exactly two files as arguments.\n");
-        exit(EXIT_FAILURE);
-    }
-    char* sourceFilePath = argv[1];
-    char* binaryFilePath = argv[2];
-
-    FILE* sourceFile = load_file(sourceFilePath, NUM_MEMORY_LOCATIONS);
-    FILE* binaryOutputFile = load_file(binaryFilePath, NUM_MEMORY_LOCATIONS);
-    if (sourceFile == NULL || binaryOutputFile == NULL) {
-        exit(EXIT_FAILURE);
-    }
-
-    run_assembler(sourceFile, binaryOutputFile);
-
-    exit(EXIT_SUCCESS);
-}
 
 void set_instruction(instruction *ins, char line[511], uint32_t *res,
                      uint32_t current_address, ST *symbol_table) {
@@ -36,25 +12,25 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
     char *token;
     char *save;
 
-    token = strtok_r(line, " ,#\n", &save);
+    token = __strtok_r(line, " ,#\n", &save);
 
-    ins->phrase = strdup(token);
+    ins->phrase = strcpy(malloc(strlen(token) + 1), token);
 
     switch (token[0]) {
-        case 'b': token = strtok_r(NULL, " ,#\n", &save);
+        case 'b': token = __strtok_r(NULL, " ,#\n", &save);
             ins->expression = get_Address(symbol_table, token);
             res[current_address] = branch(ins, current_address * 4);
             break;
         case 'c':
-        case 't': token = strtok_r(NULL, " ,#\n", &save);
+        case 't': token = __strtok_r(NULL, " ,#\n", &save);
             ins->rn = register_handler(token);;
-            token = strtok_r(NULL, " ,#\n", &save);
+            token = __strtok_r(NULL, " ,#\n", &save);
             operand_handler(token, ins);
-            token = strtok_r(NULL, " ,#\n", &save);
+            token = __strtok_r(NULL, " ,#\n", &save);
             if (token != NULL) {
                 ins->rm = ins->operand2;
                 ins->rs = shiftType(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 operand_handler(token, ins);
                 if (ins->imm == 0) {
                     printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
@@ -67,28 +43,28 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
             res[current_address] = assembler_dataProcessing(ins);
             break;
         case 'm': if (token[1] == 'u' || token[1] == 'l') {
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rm = register_handler(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rs = register_handler(token);
                 ins->imm = 0;
                 if ((ins->phrase)[1] == 'l') {
-                    token = strtok_r(NULL, " ,#\n", &save);
+                    token = __strtok_r(NULL, " ,#\n", &save);
                     ins->rn = register_handler(token);
                 }
                 res[current_address] = assembler_multiply(ins);
             } else if (token[1] == 'o') {
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);;
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 operand_handler(token, ins);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 if (token != NULL) {
                     ins->rm = ins->operand2;
                     ins->rs = shiftType(token);
-                    token = strtok_r(NULL, " ,#\n", &save);
+                    token = __strtok_r(NULL, " ,#\n", &save);
                     operand_handler(token, ins);
                     if (ins->imm == 0) {
                         printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
@@ -109,17 +85,17 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
             }
         case 'r':
         case 's': if (token[1] != 't') {
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rn = register_handler(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 operand_handler(token, ins);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 if (token != NULL) {
                     ins->rm = ins->operand2;
                     ins->rs = shiftType(token);
-                    token = strtok_r(NULL, " ,#\n", &save);
+                    token = __strtok_r(NULL, " ,#\n", &save);
                     operand_handler(token, ins);
                     if (ins->imm == 0) {
                         printf("rm : %d, type: %d, ins->operand: %d\n", ins->rm, ins->rs, ins->operand2);
@@ -136,9 +112,9 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 ins->rn = 0;
                 ins->u = 1;
                 ins->operand2 = 0;
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
-                token = strtok_r(NULL, "\n", &save);
+                token = __strtok_r(NULL, "\n", &save);
                 int i, shift = 1;
                 if (token[0] == ' ')  {
                     shift = 2;
@@ -154,9 +130,9 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                         ins->p = 1;
                         res[ins->lastAdd - 1] = ins->operand2;
                         ins->operand2 = (ins->lastAdd - 1) * 4 - current_address * 4
-                                          - 8;
+                                        - 8;
                     } else {
-                        ins->phrase = strdup("mov");
+                        ins->phrase = "mov";
                         res[current_address] = assembler_dataProcessing(ins);
                         break;
                     }
@@ -166,9 +142,9 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 res[current_address] = single_data_transfer(ins);
 
             } else {
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
-                token = strtok_r(NULL, " ,#\n", &save);
+                token = __strtok_r(NULL, " ,#\n", &save);
                 operand_handler(token, ins);
                 res[current_address] = assembler_special(ins);
             }
@@ -183,11 +159,11 @@ void run_assembler(FILE *source, FILE *bin_output) {
     instruction *ins = malloc(sizeof(instruction));
     ST *symbol_table = malloc(sizeof(ST));
 
-    int i = 0, *num = &i, no_lines;
+    int a = 0, *num = &a, num_lines;
     uint32_t current_address = 0;
     char *data, *save, *label;
 
-    data = ""; //TODO
+    data = read_file(source, num);
 
     if (data != NULL) {
         free(data);
@@ -195,5 +171,54 @@ void run_assembler(FILE *source, FILE *bin_output) {
 
     label = malloc(511 * sizeof(char));
 
-    char **array = init_2d_array(1, 511);
+    char **array = init_2d_array(*num, 511);
+    num_lines = *num;
+    array[0] = __strtok_r(data, "\n", &save);
+
+    for (int i = 1; i < num_lines; ++i) {
+        array[i] = __strtok_r(NULL, "\n", &save);
+    }
+
+    for (int i = 0; i < num_lines; ++i) {
+        if (strstr(array[i], ":") != NULL) {
+            label = strcpy(malloc(strlen(array[i]) + 1),array[i]);
+            label[strlen(label) - 1] = '\0';
+            add_symbol(current_address * 4, label, symbol_table);
+        } else {
+            current_address++;
+        }
+    }
+
+    ins->lastAdd = current_address;
+    uint32_t *res = malloc(current_address * 2 * sizeof(uint32_t));
+    current_address = 0;
+
+    for (int i = 0; i < num_lines; ++i) {
+        if (strstr(array[i], ":") == NULL) {
+            set_instruction(ins, array[i], res, current_address, symbol_table);
+            current_address++;
+        }
+    }
+
+    print_bin(bin_output, res, ins->lastAdd);
 }
+int main(int argc, char **argv) {
+    if (argc != NO_EXPECTED_ARGS) {
+        fprintf(stderr, "Assembler takes exactly two files as arguments.\n");
+        exit(EXIT_FAILURE);
+    }
+    char* sourceFilePath = argv[1];
+    char* binaryFilePath = argv[2];
+
+    FILE* sourceFile = load_file(sourceFilePath, NUM_MEMORY_LOCATIONS);
+    FILE* binaryOutputFile = load_file(binaryFilePath, NUM_MEMORY_LOCATIONS);
+    if (sourceFile == NULL || binaryOutputFile == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    run_assembler(sourceFile, binaryOutputFile);
+
+    exit(EXIT_SUCCESS);
+}
+
+

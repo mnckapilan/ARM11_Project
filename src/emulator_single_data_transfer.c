@@ -1,4 +1,4 @@
-#include "single_data_transfer.h"
+#include "emulator_single_data_transfer.h"
 
 /* 
  * This function decodes the shift type bits in the 32 bit instruction (bits 5 and 6) for the case in which the offset is
@@ -24,7 +24,8 @@ uint32_t interpret_shift_code(uint32_t shiftTypeCode, uint32_t rMRegValue, uint3
     } else if (shiftTypeCode == 3) {
 
         int32_t signedRmRegValue = rMRegValue;
-        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount));
+        result = (signedRmRegValue >> constantShiftAmount) | (signedRmRegValue << (NOBITS - constantShiftAmount)); // change this implementation
+                // and work with unsigned values/ints (uint32_t)
     }
 
     return result;
@@ -57,34 +58,6 @@ uint32_t interpret_offset_shifted_reg(State cpu, uint32_t instruction) {
 }
 
 /* 
- * Transfers data from memory to a destination register or from a source register to  memory, depending on the value of
- * the load bit. If load bit equals 1, word is loaded from memory (fetched using supplied memory address) into the dest
- * register. If load bit equals 0, word read from source register is stored into memory at given address.
- * Index of source/dest register is rdRegIndex.
- */
-uint32_t transferData(State cpu, uint32_t instruction, uint32_t memAddr) {
-    uint32_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
-    uint32_t rdRegIndex = bits_extract(instruction, RD_INDEX, RD_INDEX + REG_WIDTH);
-    uint32_t memWord;
-
-    if (lBit == 1) {
-        if (memory_in_bounds(memAddr) == 0) {
-            memWord = read_from_memory(cpu, memAddr);
-            write_to_register(cpu, rdRegIndex, memWord);
-            return 1;
-        }
-        return 0;
-    } else {
-        if (register_in_bounds(rdRegIndex) == 0) {
-            memWord = read_from_register(cpu, rdRegIndex);
-            write_to_memory(cpu, memAddr, memWord);
-            return 1;
-        }
-        return 0;
-    }
-}
-
-/* 
  * Computes memory address to based on value of up bit. Uses value stored in base register Rn and previously computed offset
  * value. Offset is either added or subtracted from base register.
  */
@@ -106,14 +79,17 @@ uint32_t compute_memory_address(uint32_t baseRegValue, uint32_t offset, uint32_t
  * does (by the offset).
  */
 uint32_t single_data_transfer(uint32_t instruction, State cpu) {
+
     uint32_t offset = 0;
     if (check_condition(instruction, cpu) == 0) {
         return 0;
     }
+    uint32_t lBit = bits_extract(instruction, L_INDEX, L_INDEX + 1);
     uint32_t immediateOffset = bits_extract(instruction, I_INDEX, I_INDEX + 1);
     uint32_t pBit = bits_extract(instruction, P_INDEX, P_INDEX + 1);
     uint32_t baseRegIndex = bits_extract(instruction, RN_INDEX, RN_INDEX + REG_WIDTH);
     uint32_t baseRegValue = read_from_register(cpu, baseRegIndex);
+    uint32_t rdRegIndex = bits_extract(instruction, RD_INDEX, RD_INDEX + REG_WIDTH);
 
     if (immediateOffset == 1) {
         offset = interpret_offset_shifted_reg(cpu, instruction);
@@ -122,17 +98,13 @@ uint32_t single_data_transfer(uint32_t instruction, State cpu) {
     }
 
     if (pBit == 1) {
-
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
-        transferData(cpu, instruction, address);
-
-    } else {
-
-        transferData(cpu, instruction, baseRegValue);
+        transfer_data(cpu, address, lBit, rdRegIndex);
+        }
+     else {
+        transfer_data(cpu, baseRegValue, lBit, rdRegIndex);
         uint32_t address = compute_memory_address(baseRegValue, offset, instruction);
         write_to_register(cpu, baseRegIndex, address);
     }
-
-
     return 1;
 }

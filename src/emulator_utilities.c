@@ -1,4 +1,4 @@
-#include "utilities.h"
+#include "emulator_utilities.h"
 
 /* Finds 2 ^ val through repeated multiplication */
 uint32_t power_of_2(uint32_t val) {

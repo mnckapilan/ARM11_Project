@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 #include "assembler_utilities.h"
-#include "assembler_dataProcessing.h"
+#include "assembler_data_processing.h"
 
 uint32_t assembler_special(instruction *ins);
 

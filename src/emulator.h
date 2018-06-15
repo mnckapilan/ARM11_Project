@@ -3,16 +3,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include "io.h"
-#include "registers.h"
-#include "memory.h"
-#include "multiply.h"
-#include "branch.h"
-#include "halt.h"
-#include "single_data_transfer.h"
-#include "data_processing.h"
-#include "utilities.h"
+#include "emulator_io.h"
+#include "emulator_registers.h"
+#include "emulator_memory.h"
+#include "emulator_multiply.h"
+#include "emulator_branch.h"
+#include "emulator_halt.h"
+#include "emulator_single_data_transfer.h"
+#include "emulator_data_processing.h"
+#include "emulator_utilities.h"
 
 #define DATA_PROCESSING_MASK 0x0c000000
 #define MULTIPLY_MASK 0x0fc000f0
