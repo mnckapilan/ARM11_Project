@@ -3,7 +3,6 @@
 //
 
 #include "assembler_dataProcessing.h"
-#include "assembler_utilities.h"
 
 uint32_t assembler_dataProcessing(instruction *ins){
 
