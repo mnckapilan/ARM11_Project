@@ -169,9 +169,6 @@ uint32_t shiftType(char *type) {
 
 void operand_handler(char* operand2, instruction *ins) {
 
-    char *eptr;
-    char *save;
-
     ins->imm = 0;
     if (contains(operand2, '=')) {
         ins->imm = 1;
