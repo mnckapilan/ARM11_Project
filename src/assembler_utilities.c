@@ -169,13 +169,21 @@ uint32_t shiftType(char *type) {
 
 void operand_handler(char* operand2, instruction *ins) {
 
-    ins->imm = 0;
-    if (contains(operand2, '=')) {
-        ins->imm = 1;
-    }
+    char *eptr;
+    char *save;
 
-    if (abs(ins -> operand2) != ins->operand2) {
-        ins->u = 0;
+    if (operand2[0] == 'r') {
+        ins->operand2 = atoi(__strtok_r(operand2, "-r", &save));
+        ins -> imm = 0;
+    } else if (strstr(operand2, "x") != NULL) {
+        ins->operand2 = strtol(operand2, &eptr, 16);
+        ins -> imm = 1;
+    } else {
+        ins->operand2 = strtol(operand2, &eptr, 10);
+        ins -> imm = 1;
+    }
+    if (abs(ins -> operand2) != ins -> operand2) {
+        ins -> u = 0;
     }
 
 

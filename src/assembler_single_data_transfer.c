@@ -20,6 +20,8 @@ uint32_t single_data_transfer(instruction *ins) {
         l = 0;
     }
 
-    return condition | (1u << 26u) | imm | p | u
-           | (l << 20u) | rn | rd | offset;
+    uint32_t result = condition | (1u << 26u) | imm | p | u
+                      | (l << 20u) | rn | rd | offset;
+
+    return result;
 }
