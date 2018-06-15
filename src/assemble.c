@@ -162,7 +162,7 @@ void run_assembler(int argc, char **argv) {
     uint32_t current_address = 0;
     char *data, *save, *label;
 
-    data = "";
+    data = read_file(argc, argv, num);
 
     if (data != NULL) {
         free(data);

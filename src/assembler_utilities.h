@@ -65,7 +65,7 @@ void print_bin(char *filename, uint32_t *bin, uint32_t last_address);
 
 void add_symbol(uint32_t address, char *label, ST *symbol_table);
 
-char *read_file(FILE *f, int *num_lines);
+char *read_file(int argc, char **argv, int *num_lines);
 
 char **init_2d_array(int rows, int cols);
 

@@ -22,7 +22,19 @@ void add_symbol(uint32_t address, char *label, ST *symbol_table) {
     symbol_table->last = symbol;
 }
 
-char *read_file(FILE *f, int *num_lines) {
+char *read_file(int argc, char **argv, int *num_lines) {
+    if (argc == 1) {
+        perror("There is no file name.");
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *f;
+    f = fopen(argv[1], "r");
+
+    if (f == NULL) {
+        perror("File not found.");
+        exit(EXIT_FAILURE);
+    }
     int num = 0;
     int num_space = 1;
 
