@@ -4,6 +4,9 @@
 
 #ifndef ARM11_09_ASSEMBLER_DATAPROCESSING_H
 #define ARM11_09_ASSEMBLER_DATAPROCESSING_H
+
+#include "assembler_utilities.h"
+
 #define COND_dataProcessing 0x0000000E
 #define cond_Mask_DP 28
 #define I_Mask_DP 25
