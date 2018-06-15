@@ -108,7 +108,8 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 res[current_address] = assembler_dataProcessing(ins);
                 break;
             }
-        case 'l': if (token[1] != 's') {
+        case 'l':
+            if (token[1] != 's') {
                 ins->rn = 0;
                 ins->u = 1;
                 ins->operand2 = 0;
@@ -140,6 +141,9 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                     address_handler(ins, token);
                 }
                 ins->imm = 0;
+                if (contains(save, '[')) {
+                    ins->imm = 1;
+                }
                 res[current_address] = single_data_transfer(ins);
 
             } else {
