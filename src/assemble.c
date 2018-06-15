@@ -139,6 +139,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 } else {
                     address_handler(ins, token);
                 }
+                ins->imm = 0;
                 res[current_address] = single_data_transfer(ins);
 
             } else {
