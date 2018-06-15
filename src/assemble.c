@@ -155,7 +155,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
 
 }
 
-void run_assembler(FILE *source, FILE *bin_output) {
+void run_assembler(int argc, char **argv) {
     instruction *ins = malloc(sizeof(instruction));
     ST *symbol_table = malloc(sizeof(ST));
 
@@ -163,7 +163,7 @@ void run_assembler(FILE *source, FILE *bin_output) {
     uint32_t current_address = 0;
     char *data, *save, *label;
 
-    data = read_file(source, num);
+    data = read_file(argc, argv, num);
 
     if (data != NULL) {
         free(data);
@@ -200,23 +200,11 @@ void run_assembler(FILE *source, FILE *bin_output) {
         }
     }
 
-    print_bin(bin_output, res, ins->lastAdd);
+    print_bin(argv[2], res, ins->lastAdd);
 }
 int main(int argc, char **argv) {
-    if (argc != NO_EXPECTED_ARGS) {
-        fprintf(stderr, "Assembler takes exactly two files as arguments.\n");
-        exit(EXIT_FAILURE);
-    }
-    char* sourceFilePath = argv[1];
-    char* binaryFilePath = argv[2];
 
-    FILE* sourceFile = load_file(sourceFilePath, NUM_MEMORY_LOCATIONS);
-    FILE* binaryOutputFile = load_file(binaryFilePath, NUM_MEMORY_LOCATIONS);
-    if (sourceFile == NULL || binaryOutputFile == NULL) {
-        exit(EXIT_FAILURE);
-    }
-
-    run_assembler(sourceFile, binaryOutputFile);
+    run_assembler(argc, argv);
 
     exit(EXIT_SUCCESS);
 }

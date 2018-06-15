@@ -24,7 +24,7 @@ emulator_utilities.o:	emulator_utilities.h
 assemble:               assemble.o assembler_branch.o assembler_data_processing.o assembler_multiply.o assembler_single_data_transfer.o assembler_special.o assembler_utilities.o
 assemble.o:             assembler_branch.h assembler_data_processing.h assembler_multiply.h assembler_single_data_transfer.h assembler_special.h assembler_utilities.h
 assembler_branch.o:     assembler_branch.h assembler_utilities.h
-assembler_data_processing.o : assembler_dataProcessing.h assembler_utilities.h
+assembler_data_processing.o : assembler_data_processing.h assembler_utilities.h
 assembler_multiply.o:   assembler_multiply.h assembler_utilities.h
 assembler_single_data_transfer.o: assembler_single_data_transfer.h assembler_utilities.h
 assembler_special.o:    assembler_special.h assembler_utilities.h assembler_data_processing.h
