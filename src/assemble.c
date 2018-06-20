@@ -120,10 +120,10 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 if (token[0] == ' ')  {
                     shift = 2;
                 }
-                ins->imm = 0;
-                if (contains(token, '=')) {
-                    ins->imm = 1;
-                }
+
+                char *op2retainer = malloc(sizeof(token));
+                op2retainer = strcpy(op2retainer, token);
+
                 for (i = 0; i < strlen(token); i++) {
                     token[i] = token[i + shift];
                 }
@@ -139,19 +139,33 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                     } else {
                         ins->phrase = "mov";
                         res[current_address] = assembler_dataProcessing(ins);
-                        break;
                     }
                 } else {
                     address_handler(ins, token);
                 }
 
+
+                ins->imm = 0;
+                if (contains(op2retainer, '=') && !contains(op2retainer, '[' )) {
+                    ins->imm = 1;
+                }
+
+
                 res[current_address] = single_data_transfer(ins);
 
             } else {
+                char *op2retainer = malloc(sizeof(token));
+                op2retainer = strcpy(op2retainer, token);
                 token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
                 token = __strtok_r(NULL, " ,#\n", &save);
                 operand_handler(token, ins);
+
+                ins->imm = 0;
+                if (contains(op2retainer, '=') && !contains(op2retainer, '[' )) {
+                    ins->imm = 1;
+                }
+
                 res[current_address] = assembler_special(ins);
             }
             break;
