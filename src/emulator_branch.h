@@ -10,6 +10,7 @@
 #define BRANCH_OFFSET_SIGN_BIT 25
 #define BRANCH_OFFSET_SHIFT 2
 #define BRANCH_SIGN_EXTEND 0xfc000000
+#define BRANCH_LINK_BIT 24
 
 uint32_t branch(uint32_t instr, State cpu);
 

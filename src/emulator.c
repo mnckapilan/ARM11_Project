@@ -11,6 +11,8 @@ State initialize_CPU() {
     cpu.memory = calloc(NUM_MEMORY_LOCATIONS, sizeof(uint8_t));
     cpu.regs = calloc(NUM_REGISTERS, sizeof(uint32_t));
 
+    cpu.regs[STACK_POINTER_INDEX] = STACK_BASE + BYTES_PER_WORD; /* Initialise stack pointer to below stack base */
+
     return cpu;
 }
 
@@ -243,7 +245,9 @@ void run_emulator(State cpu) {
     pipelineStage.fetched = 0;
     pipelineStage.decoded = 0;
 
-    while (pipelineStage.decoded != &halt) {                                            /* While the decoded instruction is not the halt one */
+    uint32_t stackOverflow = 0;
+
+    while ((pipelineStage.decoded != &halt) && (stackOverflow == 0)) {                                            /* While the decoded instruction is not the halt one */
 
         if ((pipelineStage.decodedEmpty == 0) && (pipelineStage.decoded != NULL)) {     /* If there is a decoded instruction */
 
@@ -271,10 +275,21 @@ void run_emulator(State cpu) {
 
         pipelineStage.fetched = get_next_instruction(cpu);                              /* Get the next instruction for the pipeline */
         increment_PC(cpu);                                                              /* Increment the Program Counter */
+
+        uint32_t stackPointer = read_from_register(cpu, STACK_POINTER_INDEX);
+
+        if ((max(STACK_BASE, stackPointer) - min(STACK_BASE, stackPointer)) / BYTES_PER_WORD > STACK_SIZE_WORDS) {
+            stackOverflow = 1;                                                           /* If number of words in stack exceeds 2048 */
+        }
     }
 
-    halt(0, cpu);								        /* After the pipeline finishes, call the halt function to output the final emulator state */
+    if (stackOverflow == 0) {
+        halt(0, cpu);                                        /* After the pipeline finishes, call the halt function to output the final emulator state */
+    } else {
+        printf("Error: stack overflow\n");                   /* If stack overflow occurred, don't output emulator state */
+    }
 }
+
 
 /* Frees the memory allocated to the memory and registers */
 void free_emulator(State cpu) {

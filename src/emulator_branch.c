@@ -8,6 +8,13 @@
  * The Program Counter is updated if the offset does not make its value negative.
  */
 uint32_t branch(uint32_t instr, State cpu) {
+
+    if (bits_extract(instr, BRANCH_LINK_BIT, BRANCH_LINK_BIT + BIT_SIZE) == 1) { /* If the link bit is set, the next instruction address has to be placed in the link register */
+        uint32_t oldPC = read_from_register(cpu, PC_INDEX) - BYTES_PER_WORD;     /* This means that 4 is to be subtracted from the PC register to account for pre-fetch */
+        write_to_register(cpu, LINK_REG_INDEX, oldPC);
+    }
+
+
     if (check_condition(instr, cpu) == 0) {
         return 0;
     }
