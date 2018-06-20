@@ -4,8 +4,54 @@
 #include "assembler_multiply.h"
 #include "assembler_special.h"
 #include "assembler_single_data_transfer.h"
+#include "assembler_block_data_transfer.h"
+
 #define NO_EXPECTED_ARGS 3
 
+void block_data_transfer_assemble(char* token, char* save, instruction *ins) {
+    if (((token[3] == 'f') && (token[4] == 'a')) || ((token[3] == 'i') && (token[4] == 'b'))) {
+        ins->p = 1;
+        ins->u = 1;
+    } else if (((token[3] == 'e') && (token[4] == 'a')) || ((token[3] == 'i') && (token[4] == 'a'))) {
+        ins->p = 0;
+        ins->u = 1;
+    } else if (((token[3] == 'f') && (token[4] == 'd')) || ((token[3] == 'd') && (token[4] == 'b'))) {
+        ins->p = 1;
+        ins->u = 0;
+    } else if (((token[3] == 'e') && (token[4] == 'd')) || ((token[3] == 'd') && (token[4] == 'a'))) {
+        ins->p = 0;
+        ins->u = 0;
+    }
+    if (contains(save, '!') == 1) {
+        token = __strtok_r(NULL, "!", &save);
+        ins->w = 1;
+    }
+    else {
+        token = __strtok_r(NULL, ",", &save);
+        ins->w = 0;
+    }
+    ins->rn = register_handler(token);
+    int regNo;
+    token = __strtok_r(NULL, "{", &save);
+    token = __strtok_r(NULL, "}", &save);
+    token = __strtok_r(NULL, ",", &save);
+    ins->regList = 0;
+    while (token) {
+        if (contains(token, '-') == 1) {
+            token = __strtok_r(token, "-", &save);
+            regNo = atoi(token + 1);
+            ins->regList |= 1 << regNo;
+            token = save;
+            for (int i = regNo + 1; i <= atoi(token + 1); i++) {
+                ins->regList |= 1 << i;
+            }
+        } else {
+            regNo = atoi(token + 1);
+            ins->regList |= 1 << regNo;
+        }
+        token = __strtok_r(NULL, ",", &save);
+    }
+}
 void set_instruction(instruction *ins, char line[511], uint32_t *res,
                      uint32_t current_address, ST *symbol_table) {
 
@@ -17,12 +63,14 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
     ins->phrase = strcpy(malloc(strlen(token) + 1), token);
 
     switch (token[0]) {
-        case 'b': token = __strtok_r(NULL, " ,#\n", &save);
+        case 'b':
+            token = __strtok_r(NULL, " ,#\n", &save);
             ins->expression = get_Address(symbol_table, token);
             res[current_address] = branch(ins, current_address * 4);
             break;
         case 'c':
-        case 't': token = __strtok_r(NULL, " ,#\n", &save);
+        case 't':
+            token = __strtok_r(NULL, " ,#\n", &save);
             ins->rn = register_handler(token);;
             token = __strtok_r(NULL, " ,#\n", &save);
             operand_handler(token, ins);
@@ -42,7 +90,8 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
             }
             res[current_address] = assembler_dataProcessing(ins);
             break;
-        case 'm': if (token[1] == 'u' || token[1] == 'l') {
+        case 'm':
+            if (token[1] == 'u' || token[1] == 'l') {
                 token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
                 token = __strtok_r(NULL, " ,#\n", &save);
@@ -79,12 +128,14 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
             break;
         case 'o':
         case 'e':
-        case 'a': if (token[4] == 'q') {
+        case 'a':
+            if (token[4] == 'q') {
                 res[current_address] = assembler_special(ins);
                 break;
             }
         case 'r':
-        case 's': if (token[1] != 't') {
+        case 's':
+            if (token[1] != 't') {
                 token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
                 token = __strtok_r(NULL, " ,#\n", &save);
@@ -107,53 +158,62 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 }
                 res[current_address] = assembler_dataProcessing(ins);
                 break;
+            } else if ((token[1] == 't') && (token[2] == 'm')) {
+                block_data_transfer_assemble(token, save, ins);
+                res[current_address] = block_data_transfer(ins);
+                break;
             }
+
         case 'l':
             if (token[1] != 's') {
-                ins->rn = 0;
-                ins->u = 1;
-                ins->operand2 = 0;
-                ins->p = 1;
-                token = __strtok_r(NULL, " ,#\n", &save);
-                ins->rd = register_handler(token);
-                token = __strtok_r(NULL, "\n", &save);
-                int i, shift = 1;
-                if (token[0] == ' ')  {
-                    shift = 2;
-                }
-
-                char *op2retainer = malloc(sizeof(token));
-                op2retainer = strcpy(op2retainer, token);
-
-                for (i = 0; i < strlen(token); i++) {
-                    token[i] = token[i + shift];
-                }
-                if (token[0] != 'r') {
-                    operand_handler(token, ins);
-                    if ((ins->operand2) > 0xff) {
-                        ins->rn = 15;
-                        ins->lastAdd = ins->lastAdd + 1;
-                        ins->p = 1;
-                        res[ins->lastAdd - 1] = ins->operand2;
-                        ins->operand2 = (ins->lastAdd - 1) * 4 - current_address * 4
-                                        - 8;
-                    } else {
-                        ins->phrase = "mov";
-                        res[current_address] = assembler_dataProcessing(ins);
-                    }
+                if ((token[1] == 'd') && (token[2] == 'm')) {
+                    block_data_transfer_assemble(token, save, ins);
+                    res[current_address] = block_data_transfer(ins);
                 } else {
-                    address_handler(ins, token);
+                    ins->rn = 0;
+                    ins->u = 1;
+                    ins->operand2 = 0;
+                    ins->p = 1;
+                    token = __strtok_r(NULL, " ,#\n", &save);
+                    ins->rd = register_handler(token);
+                    token = __strtok_r(NULL, "\n", &save);
+                    int i, shift = 1;
+                    if (token[0] == ' ') {
+                        shift = 2;
+                    }
+
+                    char *op2retainer = malloc(sizeof(token));
+                    op2retainer = strcpy(op2retainer, token);
+
+                    for (i = 0; i < strlen(token); i++) {
+                        token[i] = token[i + shift];
+                    }
+                    if (token[0] != 'r') {
+                        operand_handler(token, ins);
+                        if ((ins->operand2) > 0xff) {
+                            ins->rn = 15;
+                            ins->lastAdd = ins->lastAdd + 1;
+                            ins->p = 1;
+                            res[ins->lastAdd - 1] = ins->operand2;
+                            ins->operand2 = (ins->lastAdd - 1) * 4 - current_address * 4
+                                            - 8;
+                        } else {
+                            ins->phrase = "mov";
+                            res[current_address] = assembler_dataProcessing(ins);
+                        }
+                    } else {
+                        address_handler(ins, token);
+                    }
+
+
+                    ins->imm = 0;
+                    if (contains(op2retainer, '=') && !contains(op2retainer, '[')) {
+                        ins->imm = 1;
+                    }
+
+
+                    res[current_address] = single_data_transfer(ins);
                 }
-
-
-                ins->imm = 0;
-                if (contains(op2retainer, '=') && !contains(op2retainer, '[' )) {
-                    ins->imm = 1;
-                }
-
-
-                res[current_address] = single_data_transfer(ins);
-
             } else {
                 char *op2retainer = malloc(sizeof(token));
                 op2retainer = strcpy(op2retainer, token);
@@ -163,19 +223,23 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 operand_handler(token, ins);
 
                 ins->imm = 0;
-                if (contains(op2retainer, '=') && !contains(op2retainer, '[' )) {
+                if (contains(op2retainer, '=') && !contains(op2retainer, '[')) {
                     ins->imm = 1;
                 }
 
                 res[current_address] = assembler_special(ins);
             }
             break;
-        default:break;
+        default:
+            break;
     }
 
 
 }
 
+void block_data_transfer_assembler() {
+
+}
 void run_assembler(int argc, char **argv) {
     instruction *ins = malloc(sizeof(instruction));
     ST *symbol_table = malloc(sizeof(ST));
@@ -198,7 +262,7 @@ void run_assembler(int argc, char **argv) {
 
     for (int i = 0; i < num_lines; ++i) {
         if (contains(array[i], ':')) {
-            label = strcpy(malloc(strlen(array[i]) + 1),array[i]);
+            label = strcpy(malloc(strlen(array[i]) + 1), array[i]);
             label[strlen(label) - 1] = '\0';
             add_symbol(current_address * 4, label, symbol_table);
         } else {
@@ -223,6 +287,7 @@ void run_assembler(int argc, char **argv) {
 
     print_bin(argv[2], res, ins->lastAdd);
 }
+
 int main(int argc, char **argv) {
 
     run_assembler(argc, argv);

@@ -6,7 +6,7 @@
 
 uint32_t block_data_transfer(instruction *ins) {
 
-    uint32_t condition = COND << 28u;
+    uint32_t condition = COND <<28u;
     uint32_t p = (ins->p) << 24u;
     uint32_t u = (ins->u) << 23u;
     uint32_t l = 1;
