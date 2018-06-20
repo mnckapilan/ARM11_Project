@@ -113,6 +113,7 @@ void set_instruction(instruction *ins, char line[511], uint32_t *res,
                 ins->rn = 0;
                 ins->u = 1;
                 ins->operand2 = 0;
+                ins->p = 1;
                 token = __strtok_r(NULL, " ,#\n", &save);
                 ins->rd = register_handler(token);
                 token = __strtok_r(NULL, "\n", &save);

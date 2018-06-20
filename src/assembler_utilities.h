@@ -33,6 +33,9 @@ typedef struct instructions {
     uint32_t lastAdd;
     uint32_t p;
     uint32_t u;
+    uint32_t s;
+    uint32_t w;
+    uint32_t regList;
 
 } instruction;
 
