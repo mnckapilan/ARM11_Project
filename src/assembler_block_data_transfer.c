@@ -13,7 +13,7 @@ uint32_t block_data_transfer(instruction *ins) {
     uint32_t rn = (ins->rn) << 16u;
     uint32_t s = (ins->s) << 22u;
     uint32_t w = (ins->w) << 21u;
-    uint32_t regList = (uint32_t) abs(ins->regList);
+    uint32_t regList = ins->regList;
 
     if((ins->phrase)[0] == 's') {
         l = 0;
